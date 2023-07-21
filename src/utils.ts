@@ -21,36 +21,30 @@ export function recursivelyGetCompatData(data: any, path: string, result: any) {
   }
 }
 
-export function recursivelyGetFeatures(data: any, path: string, result: any) {
-
-  if (data.__compat) {
-    const category = path.split('.')[0];
-
-    result[path] = {
-      path,
-      pathWithoutCategory: path.replace(category + '.', ''),
-      category,
-      mdn_url: data.__compat.mdn_url,
-      spec_url: data.__compat.spec_url,
-      compatibilityData: data.__compat,
-    };
-  }
+export function recursivelyGetFeatures(data: any, path: string, result: any, parentPath: any = null, level = 0) {
 
   for (const key in data) {
+    // If an object has a __compat property, it's a feature that we need to index
     if (key === '__compat') {
       const category = path.split('.')[0];
+      const pathWithoutCategory = path.replace(category + '.', '');
 
       result[path] = {
+        name: path.split('.').pop(),
         path,
-        pathWithoutCategory: path.replace(category + '.', ''),
+        searchablePath: pathWithoutCategory.replace(/\./g, ' '),
         category,
         mdn_url: data.__compat.mdn_url,
         spec_url: data.__compat.spec_url,
-        compatibilityData: data.__compat,
+        parentPath: category === parentPath ? null : parentPath,
+        // compatibilityData: data.__compat,
       };
     } else if (isObject(data[key])) {
       const newPath = path ? path + '.' + key : key;
-      recursivelyGetFeatures(data[key], newPath, result);
+      const category = path.split('.')[0];
+      const pathWithoutCategory = path.replace(category + '.', '');
+
+      recursivelyGetFeatures(data[key], newPath, result, pathWithoutCategory, level + 1);
     }
   }
 }
