@@ -91,6 +91,7 @@ const FeatureInputSearch = () => {
               }}
             >
               <Button
+                variant="ghost"
                 onClick={() => {
                   setSearch('');
                   setSelectedFeatureId('');
@@ -99,11 +100,7 @@ const FeatureInputSearch = () => {
                 sx={{
                   display: 'inline-flex',
                   p: 2,
-                  bg: 'transparent',
                   borderRadius: '8px',
-                  '&:hover': {
-                    bg: 'rgba(125,125,125,0.1)'
-                  },
                 }}
               >
                 <Icon icon={Cancel} />
@@ -122,6 +119,7 @@ const FeatureInputSearch = () => {
               maxHeight: '300px',
               overflow: 'scroll',
               borderRadius: '16px',
+              boxShadow: 'default',
             }}
           >
             {results.length > 0 ? results.map((result: any) => (
@@ -132,7 +130,9 @@ const FeatureInputSearch = () => {
                     setShowResults(false);
                     setSearch(result.searchablePath);
                   }}
+                  variant="ghost"
                   sx={{
+                    color: 'textNeutralPrimary',
                     display: 'flex',
                     alignItems: 'baseline',
                     py: '15px',
@@ -140,13 +140,10 @@ const FeatureInputSearch = () => {
                     textAlign: 'left',
                     background: 'transparent',
                     gap: 1,
-                    borderBottom: '1px solid',
                     borderRadius: 0,
-                    borderColor: 'borderNeutral',
-
-                    '&:hover': {
-                      bg: 'backgroundHover',
-                    },
+                    border: 'none',
+                    borderBottom: '1px solid',
+                    borderBottomColor: 'borderNeutralSecondary',
                   }}
                 >
                   <CategoryBadge category={result.category} size="sm" />

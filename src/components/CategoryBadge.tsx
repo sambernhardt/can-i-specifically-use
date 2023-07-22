@@ -3,7 +3,7 @@ import { Box, BoxProps } from 'theme-ui'
 
 interface Props extends BoxProps {
   category: 'html' | 'css' | 'api' | 'webextensions',
-  size: 'sm' | 'md',
+  size?: 'sm' | 'md',
 }
 
 const sizeLookup = {
@@ -13,19 +13,26 @@ const sizeLookup = {
     p: 1,
   },
   md: {
-    borderRadius: '16px',
+    borderRadius: '8px',
     fontSize: 1,
-    p: 3,
+    p: 2,
   }
 }
 
-const CategoryBadge: FC<Props> = ({ category, size, sx }) => {
+const CategoryBadge: FC<Props> = ({
+  category,
+  size = 'md',
+  sx
+}) => {
   return (
     <Box
       sx={{
+        fontFamily: 'body',
+        display: 'inline-block',
         lineHeight: 1,
+        color: 'textNeutralPrimary',
         border: '1px solid',
-        borderColor: 'borderNeutral',
+        borderColor: 'borderNeutralPrimary',
         ...sizeLookup[size],
         ...sx,
       }}

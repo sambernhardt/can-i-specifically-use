@@ -3,7 +3,7 @@ import FeatureInputSearch from "./components/FeatureSearchInput"
 import FeatureDetail from "./components/FeatureDetail"
 import ThemeSwitcher from "./components/ThemeSwitcher";
 
-const HEADER_HEIGHT = '100px';
+const HEADER_HEIGHT = '80px';
 
 const App = () => {
   return (
@@ -22,11 +22,11 @@ const App = () => {
           justifyContent: 'space-between',
           height: HEADER_HEIGHT,
           borderBottom: '1px solid',
-          borderColor: 'borderNeutral',
+          borderColor: 'borderNeutralPrimary',
         }}
       >
         <div>
-          <Heading>Can I specifically use?</Heading>
+          <Heading as="h4">Can I specifically use?</Heading>
           <Text
             sx={{
               color: 'textNeutralSecondary',
@@ -39,8 +39,8 @@ const App = () => {
       <Flex
         sx={{
           height: `calc(100vh - ${HEADER_HEIGHT})`,
-          p: 4,
-          gap: 4,
+          p: 5,
+          gap: 5,
         }}
       >
         <Box
@@ -53,6 +53,7 @@ const App = () => {
         <Box
           sx={{
             flex: 1,
+            maxWidth: '800px',
           }}
         >
           <FeatureDetail />

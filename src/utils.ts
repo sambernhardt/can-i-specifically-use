@@ -52,7 +52,7 @@ export type FeatureType = {
   name: string;
   path: string;
   searchablePath: string;
-  category: string;
+  category: 'html' | 'css' | 'api' | 'webextensions';
   mdn_url: string;
   spec_url: string;
   parentPath: string | null;
