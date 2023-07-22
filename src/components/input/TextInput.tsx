@@ -25,8 +25,8 @@ const TextInput = forwardRef<any, TextInputProps>(({
         ref={ref}
         sx={{
           p: 3,
-          pl: leadingAdornment ? 8 + ICON_WIDTH + 8 + 'px' : 3,
-          pr: trailingAdornment ? 8 + ICON_WIDTH + 8 + 'px' : 3,
+          pl: leadingAdornment ? 12 + ICON_WIDTH + 12 + 'px' : 3,
+          pr: trailingAdornment ? 12 + ICON_WIDTH + 12 + 'px' : 3,
           width: '100%',
           borderRadius: '12px',
           border: '1px solid',

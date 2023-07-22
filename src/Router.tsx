@@ -1,7 +1,5 @@
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import App from './App';
-import { get } from 'lodash';
-import { bcdDataAsKeys } from './data';
 
 const router = createBrowserRouter([
   {
@@ -9,14 +7,12 @@ const router = createBrowserRouter([
     element: <App />,
     loader: async ({ params }) => {
       return params;
-      // return { get(bcdDataAsKeys, selectedFeatureId)};
     },
   },
   {
     path: "/feature/:featureId",
     loader: async ({ params }) => {
       return params;
-      // return { get(bcdDataAsKeys, selectedFeatureId)};
     },
     element: <App />,
   },
