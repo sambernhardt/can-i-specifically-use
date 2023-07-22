@@ -1,6 +1,5 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Fuse from 'fuse.js';
-import useDebouncedState from '../hooks/useDebouncedState';
 import { useGlobalContext } from './ContextProvider';
 import { Box, Button, Flex, Text } from 'theme-ui';
 import { Cancel, Search } from 'iconoir-react';
@@ -8,19 +7,22 @@ import Icon from './Icon';
 import TextInput from './input/TextInput';
 import { useDebounce } from '../hooks/useDebounce';
 import CategoryBadge from './CategoryBadge';
+import { useNavigate } from "react-router-dom";
+import { bcdDataAsArray, bcdDataAsKeys } from '../data';
+
 
 const FeatureInputSearch = () => {
+  let navigate = useNavigate();
   const {
-    bcdDataAsKeys,
-    bcdDataAsArray,
     setSelectedFeatureId,
+    selectedFeature,
   } = useGlobalContext();
 
   const fuse = useMemo(() => {
     const options = {
       includeScore: true,
+      threshold: 0.3,
       keys: [
-        'name',
         'searchablePath',
         'category',
       ],
@@ -29,15 +31,17 @@ const FeatureInputSearch = () => {
     return new Fuse(bcdDataAsArray, options)
   }, [bcdDataAsKeys]);
 
-  const [search, setSearch] = useState('');
-  const debouncedSearch = useDebounce<string>(search, 100);
+  const [search, setSearch] = useState(selectedFeature ? selectedFeature.searchablePath : '');
+  const debouncedSearch = useDebounce<string>(search, 20);
   const [showResults, setShowResults] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const results = useMemo(() => {
-    const results = fuse.search(debouncedSearch).map((result: any) => result.item).splice(0, 20);
-    return results
+    const _results = fuse.search(debouncedSearch).map((result: any) => result.item).splice(0, 15);
+    return _results
   }, [debouncedSearch, fuse]);
+
+  const shouldShowResults = search.length > 0 && showResults;
 
   const showClearButton = search.length > 0;
 
@@ -55,8 +59,13 @@ const FeatureInputSearch = () => {
           placeholder="Search"
           value={search}
           onChange={e => {
-            setSearch(e.target.value);
-            setShowResults(true);
+            if (e.target.value.length === 0) {
+              setSearch('');
+              setShowResults(false);
+            } else {
+              setSearch(e.target.value);
+              setShowResults(true);
+            }
           }}
           leadingAdornment={(
             <Flex
@@ -96,6 +105,7 @@ const FeatureInputSearch = () => {
                   setSearch('');
                   setSelectedFeatureId('');
                   inputRef.current?.focus();
+                  navigate('/');
                 }}
                 sx={{
                   display: 'inline-flex',
@@ -108,7 +118,7 @@ const FeatureInputSearch = () => {
             </Flex>
           )}
         />
-        {showResults && (
+        {shouldShowResults && (
           <Box
             sx={{
               position: 'absolute',
@@ -116,6 +126,7 @@ const FeatureInputSearch = () => {
               left: 0,
               width: '100%',
               bg: 'backgroundSurface',
+              zIndex: 1,
               maxHeight: '300px',
               overflow: 'scroll',
               borderRadius: '16px',
@@ -129,6 +140,8 @@ const FeatureInputSearch = () => {
                     setSelectedFeatureId(result.path);
                     setShowResults(false);
                     setSearch(result.searchablePath);
+
+                    navigate(`/feature/${result.path.replace(/\./g, '+')}`);
                   }}
                   variant="ghost"
                   sx={{
@@ -160,9 +173,21 @@ const FeatureInputSearch = () => {
                 </Button>
               </div>
             )) : (
-              <Text>
-                No results
-              </Text>
+              <Flex
+                sx={{
+                  p: 4,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Text
+                  sx={{
+                    color: 'textNeutralSecondary',
+                  }}
+                >
+                  No results
+                </Text>
+              </Flex>
             )}
           </Box>
         )}

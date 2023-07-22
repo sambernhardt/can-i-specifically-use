@@ -54,7 +54,7 @@ const Message: FC<Props> = ({
       sx={{
         borderRadius: '16px',
         p: 4,
-        gap: 4,
+        gap: 3,
         bg: background,
         color: textSecondary,
         ...sx,
@@ -64,7 +64,8 @@ const Message: FC<Props> = ({
         <Icon
           icon={icon}
           sx={{
-            color: textPrimary,
+            color: textSecondary,
+            flexShrink: 0,
           }}
         />
       )}

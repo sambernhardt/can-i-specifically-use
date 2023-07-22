@@ -1,14 +1,8 @@
 import React, { FC, PropsWithChildren, useContext, useState } from 'react'
-import bcd from '@mdn/browser-compat-data';
-import { useMemo } from 'react'
-import { FeatureType, recursivelyGetFeatures } from '../utils';
 import { get } from 'lodash';
-
-const { 
-  __meta,
-  browsers,
-  ...bcdData
-} = bcd as any;
+import { useLoaderData, useParams } from 'react-router-dom';
+import { FeatureType } from '../utils';
+import { bcdDataAsKeys } from '../data';
 
 type ContextType = {
   bcdData: any,
@@ -22,22 +16,11 @@ type ContextType = {
 export const GlobalContext = React.createContext({});
 
 const ContextProvider: FC<PropsWithChildren> = ({ children }) => {
-  const bcdDataAsKeys: Record<string, FeatureType> = useMemo(() => {
-    const compatData: any = {};
-    recursivelyGetFeatures(bcdData, '', compatData);
-    return compatData;
-  }, []);
-  const bcdDataAsArray: FeatureType[] = useMemo(() => {
-    return Object.entries(bcdDataAsKeys).map(([, value]) => value);
-  }, [bcdDataAsKeys]);
-
-  const [selectedFeatureId, setSelectedFeatureId] = useState('');
+  const { featureId } = useLoaderData();
+  const [selectedFeatureId, setSelectedFeatureId] = useState(featureId ? featureId.replace(/\+/g, '.') : '');
   const selectedFeature = get(bcdDataAsKeys, selectedFeatureId);
 
   const context = {
-    bcdData,
-    bcdDataAsKeys,
-    bcdDataAsArray,
     selectedFeatureId, setSelectedFeatureId,
     selectedFeature,
   }

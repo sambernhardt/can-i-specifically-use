@@ -1,11 +1,26 @@
-import { Box, Flex, Heading, Text } from "theme-ui"
+import { useLayoutEffect } from "react";
+import { Box, Divider, Flex, Heading, Link, Text } from "theme-ui"
 import FeatureInputSearch from "./components/FeatureSearchInput"
 import FeatureDetail from "./components/FeatureDetail"
 import ThemeSwitcher from "./components/ThemeSwitcher";
+import { useLoaderData, useParams } from "react-router-dom";
+import { useGlobalContext } from "./components/ContextProvider";
+import Fieldset from "./components/Fieldset";
+import TextInput from "./components/input/TextInput";
 
 const HEADER_HEIGHT = '80px';
 
 const App = () => {
+  const { setSelectedFeatureId } = useGlobalContext();
+  const { featureId } = useLoaderData();
+
+  useLayoutEffect(() => {
+    if (featureId) {
+      const featureIdKey = featureId.replace(/\+/g, '.');
+      setSelectedFeatureId(featureIdKey);
+    }
+  }, [featureId]);
+
   return (
     <Box
       sx={{
@@ -26,7 +41,7 @@ const App = () => {
         }}
       >
         <div>
-          <Heading as="h4">Can I specifically use?</Heading>
+          <Heading as="h4">Can I specifically use... ?</Heading>
           <Text
             sx={{
               color: 'textNeutralSecondary',
@@ -38,22 +53,57 @@ const App = () => {
       </Flex>
       <Flex
         sx={{
+          flexDirection: ['column', 'column', 'row'],
           height: `calc(100vh - ${HEADER_HEIGHT})`,
-          p: 5,
-          gap: 5,
+          p: [4, 6],
+          gap: [4, 6],
         }}
       >
-        <Box
+        <Flex
           sx={{
-            width: '400px',
+            flexDirection: 'column',
+            gap: [4, 5],
+            width: ['100%', '350px'],
+            maxWidth: '100%',
           }}
         >
           <FeatureInputSearch />
-        </Box>
+          <Fieldset
+            label="Usage data"
+            labelAction={(
+              <Link
+                sx={{
+                  fontSize: 1,
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                Edit dataset
+              </Link>
+            )}
+          >
+            <TextInput
+              placeholder="Search"
+            />
+          </Fieldset>
+        </Flex>
+        <Box
+          sx={{
+            width: '1px',
+            height: '100%',
+            bg: 'borderNeutralPrimary',
+            display: ['none', 'none', 'block'],  
+          }}
+        />
+        <Divider
+          sx={{
+            display: ['block', 'block', 'none'],
+            my: 3,
+          }}
+        />
         <Box
           sx={{
             flex: 1,
-            maxWidth: '800px',
+            maxWidth: '1000px',
           }}
         >
           <FeatureDetail />

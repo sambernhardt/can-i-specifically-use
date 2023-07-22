@@ -11,6 +11,7 @@ const sizeLookup = {
     borderRadius: '4px',
     fontSize: 1,
     p: 1,
+    color: 'textNeutralSecondary',
   },
   md: {
     borderRadius: '8px',

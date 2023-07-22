@@ -28,7 +28,7 @@ const TextInput = forwardRef<any, TextInputProps>(({
           pl: leadingAdornment ? theme => theme.space[3] + ICON_WIDTH + theme.space[3] + 'px' : 3,
           pr: trailingAdornment ? theme => theme.space[3] + ICON_WIDTH + theme.space[3] + 'px' : 3,
           width: '100%',
-          borderRadius: '16px',
+          borderRadius: '12px',
           border: '1px solid',
           borderColor: 'borderNeutralPrimary',
           boxShadow: 'default',

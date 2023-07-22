@@ -1,26 +1,36 @@
 import { FC, PropsWithChildren } from 'react'
-import { Box, Label, Text } from 'theme-ui'
+import { Box, Flex, Label, Text } from 'theme-ui'
 
 interface FieldsetProps extends PropsWithChildren {
   label: string,
+  labelAction?: React.ReactNode,
   error?: string,
 }
 
 const Fieldset: FC<FieldsetProps> = ({
   label,
   error,
-  children
+  children,
+  labelAction
 }) => {
   return (
     <Box>
-      <Label
+      <Flex
         sx={{
+          justifyContent: 'space-between',
           mb: 2,
-          pl: 2,
         }}
       >
-        {label}
-      </Label>
+        <Label
+          sx={{
+            pl: 2,
+            width: 'auto',
+          }}
+        >
+          {label}
+        </Label>
+        {labelAction}
+      </Flex>
       {children}
       {error && (
         <Text as="p" sx={{ color: 'error' }}>

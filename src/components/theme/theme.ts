@@ -10,19 +10,19 @@ export const theme: Theme = {
     textNeutralPrimary: '#171515',
     textNeutralSecondary: '#636363',
     textLink: '#095CFF',
-    textDangerPrimary: '#A1615D',
-    textDangerSecondary: '#DD807B',
+    textDangerPrimary: '#95140b',
+    textDangerSecondary: '#ab403a',
     textSuccessPrimary: '#224d22',
     textSuccessSecondary: '#689566',
-    textWarningPrimary: '#D9B369',
-    textWarningSecondary: '#F1B367',
+    textWarningPrimary: '#44210a',
+    textWarningSecondary: '#b1834a',
 
     background: '#f6f6f6',
     backgroundSurface: '#fff',
     backgroundHover: 'rgba(0, 0, 0, 0.05)',
     backgroundDangerAlpha: 'rgba(161,47,47,0.1)',
     backgroundSuccessAlpha: 'rgba(70, 255, 57, 0.221)',
-    backgroundWarningAlpha: 'rgba(111,61,0,0.25)',
+    backgroundWarningAlpha: 'rgba(200, 127, 39, 0.131)',
 
     borderNeutralPrimary: '#dedede',
     borderNeutralSecondary: '#eaeaea',
@@ -48,6 +48,7 @@ export const theme: Theme = {
         backgroundWarningAlpha: 'rgba(111,61,0,0.25)',
 
         borderNeutralPrimary: '#2B2B2B',
+        borderNeutralSecondary: '#242424',
       }
     }
   },
@@ -65,15 +66,19 @@ export const theme: Theme = {
     primary: {
       fontFamily: 'body',
       cursor: 'pointer',
+      color: 'textNeutralPrimary',
       bg: 'backgroundSurface',
       border: '1px solid',
       borderColor: 'borderNeutralPrimary',
       boxShadow: 'default',
+      borderRadius: '8px',
     },
     ghost: {
       fontFamily: 'body',
+      borderRadius: '8px',
       cursor: 'pointer',
       border: 'none',
+      color: 'textNeutralPrimary',
       background: 'transparent',
 
       '&:hover': {
@@ -90,6 +95,15 @@ export const theme: Theme = {
       fontFamily: 'heading',
       color: 'textNeutralPrimary',
       fontWeight: 600,
+    },
+  },
+  styles: {
+    a: {
+      fontFamily: 'body',
+      color: 'textLink',
+    },
+    hr: {
+      color: 'borderNeutralSecondary',
     }
   },
   forms: {

@@ -16,43 +16,43 @@ const SupportCard: FC<Props> = ({
   subtext,
 }) => {
   return (
-    <Box
+    <Flex
       sx={{
-        display: 'block',
         width: '100%',
         borderRadius: '16px',
-        p: 5,
-        gap: 4,
+        p: 4,
+        gap: 3,
         bg: 'backgroundSurface',
       }}
     >
-      <Flex
-        sx={{
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-      >
-        <Label>{label}</Label>
-        <Icon icon={icon} />
-      </Flex>
-      <Text
-        sx={{
-          display: 'block',
-          fontSize: 7,
-          fontWeight: 'bold',
-          mb: 3,
-        }}
-      >
-        {stat}
-      </Text>
-      <Text
-        sx={{
-          color: 'textNeutralSecondary',
-        }}
-      >
-        {subtext}
-      </Text>
-    </Box>
+      <Icon icon={icon} />
+      <Box>
+        <Flex
+          sx={{
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <Label sx={{ color: 'textNeutralSecondary' }}>{label}</Label>
+        </Flex>
+        <Text
+          sx={{
+            display: 'block',
+            fontSize: 6,
+            mb: 3,
+          }}
+        >
+          {stat}
+        </Text>
+        <Text
+          sx={{
+            color: 'textNeutralSecondary',
+          }}
+        >
+          {subtext}
+        </Text>
+      </Box>
+    </Flex>
   )
 }
 
