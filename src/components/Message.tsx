@@ -52,6 +52,7 @@ const Message: FC<Props> = ({
   return (
     <Flex
       sx={{
+        flexDirection: ['column', 'row'],
         borderRadius: '16px',
         p: 4,
         gap: 3,

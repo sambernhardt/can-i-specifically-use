@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import { useGlobalContext } from './ContextProvider'
-import { Flex, Heading, Link, Text } from 'theme-ui';
+import { Box, Flex, Heading, Link, Text } from 'theme-ui';
 import CategoryBadge from './CategoryBadge';
 import Message from './Message';
 import { CheckCircle, WarningCircle, Link as LinkIcon } from 'iconoir-react';
@@ -194,12 +194,19 @@ const FeatureDetail = () => {
                 subtext='784 users'
               />
             </Flex>
-            <pre>
-              {JSON.stringify(selectedFeature, null, 2)}
-            </pre>
-            <pre>
-              {JSON.stringify(get(bcdData, selectedFeature.path, ''), null, 2)}
-            </pre>
+            <Box
+              sx={{
+                overflow: 'auto',
+                width: '100%',
+              }}
+            >
+              <pre>
+                {JSON.stringify(selectedFeature, null, 2)}
+              </pre>
+              <pre>
+                {JSON.stringify(get(bcdData, selectedFeature.path, ''), null, 2)}
+              </pre>
+            </Box>
           </Flex>
         </div>
       ) : (

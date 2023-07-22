@@ -18,6 +18,7 @@ const SupportCard: FC<Props> = ({
   return (
     <Flex
       sx={{
+        flexDirection: ['column', 'row'],
         width: '100%',
         borderRadius: '16px',
         p: 4,
@@ -38,7 +39,7 @@ const SupportCard: FC<Props> = ({
         <Text
           sx={{
             display: 'block',
-            fontSize: 6,
+            fontSize: [4, 6],
             mb: 3,
           }}
         >

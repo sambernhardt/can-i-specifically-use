@@ -63,8 +63,8 @@ const App = () => {
           sx={{
             flexDirection: 'column',
             gap: [4, 5],
-            width: ['100%', '350px'],
-            maxWidth: '100%',
+            maxWidth: ['100%', '100%', '300px'],
+            flex: 1,
           }}
         >
           <FeatureInputSearch />
@@ -102,7 +102,7 @@ const App = () => {
         />
         <Box
           sx={{
-            flex: 1,
+            flex: 2,
             maxWidth: '1000px',
           }}
         >
