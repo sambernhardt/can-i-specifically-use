@@ -1,12 +1,11 @@
 import { get } from 'lodash';
 import { useGlobalContext } from './ContextProvider'
-import { Button, Flex, Heading, Link, Text } from 'theme-ui';
+import { Flex, Heading, Link, Text } from 'theme-ui';
 import CategoryBadge from './CategoryBadge';
 import Message from './Message';
 import { CheckCircle, WarningCircle, Link as LinkIcon } from 'iconoir-react';
 import SupportCard from './SupportCard';
 import Icon from './Icon';
-import { useState } from 'react';
 
 type supportStatusTypes = 'veryWellSupported' | 'moderatelySupported' | 'notWellSupported';
 
