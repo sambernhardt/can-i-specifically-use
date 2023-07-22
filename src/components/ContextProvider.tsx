@@ -1,6 +1,6 @@
 import React, { FC, PropsWithChildren, useContext, useState } from 'react'
 import { get } from 'lodash';
-import { useLoaderData, useParams } from 'react-router-dom';
+import { useLoaderData } from 'react-router-dom';
 import { FeatureType } from '../utils';
 import { bcdDataAsKeys } from '../data';
 
@@ -16,7 +16,7 @@ type ContextType = {
 export const GlobalContext = React.createContext({});
 
 const ContextProvider: FC<PropsWithChildren> = ({ children }) => {
-  const { featureId } = useLoaderData();
+  const { featureId } = useLoaderData() as { featureId: string };
   const [selectedFeatureId, setSelectedFeatureId] = useState(featureId ? featureId.replace(/\+/g, '.') : '');
   const selectedFeature = get(bcdDataAsKeys, selectedFeatureId);
 

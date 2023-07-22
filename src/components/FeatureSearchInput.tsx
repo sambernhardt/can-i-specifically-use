@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import Fuse from 'fuse.js';
 import { useGlobalContext } from './ContextProvider';
 import { Box, Button, Flex, Text } from 'theme-ui';

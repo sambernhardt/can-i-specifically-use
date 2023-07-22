@@ -3,7 +3,7 @@ import { Box, Divider, Flex, Heading, Link, Text } from "theme-ui"
 import FeatureInputSearch from "./components/FeatureSearchInput"
 import FeatureDetail from "./components/FeatureDetail"
 import ThemeSwitcher from "./components/ThemeSwitcher";
-import { useLoaderData, useParams } from "react-router-dom";
+import { useLoaderData } from "react-router-dom";
 import { useGlobalContext } from "./components/ContextProvider";
 import Fieldset from "./components/Fieldset";
 import TextInput from "./components/input/TextInput";
@@ -12,7 +12,7 @@ const HEADER_HEIGHT = '80px';
 
 const App = () => {
   const { setSelectedFeatureId } = useGlobalContext();
-  const { featureId } = useLoaderData();
+  const { featureId } = useLoaderData() as { featureId: string };
 
   useLayoutEffect(() => {
     if (featureId) {

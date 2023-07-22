@@ -1,5 +1,12 @@
 import type { Theme } from 'theme-ui'
 
+const buttonStyles = {
+  fontFamily: 'body',
+  borderRadius: '8px',
+  cursor: 'pointer',
+  color: 'textNeutralPrimary',
+}
+
 export const theme: Theme = {
   fonts: {
     body: 'system-ui, sans-serif',
@@ -64,21 +71,15 @@ export const theme: Theme = {
   ],
   buttons: {
     primary: {
-      fontFamily: 'body',
-      cursor: 'pointer',
-      color: 'textNeutralPrimary',
+      ...buttonStyles,
       bg: 'backgroundSurface',
       border: '1px solid',
       borderColor: 'borderNeutralPrimary',
       boxShadow: 'default',
-      borderRadius: '8px',
     },
     ghost: {
-      fontFamily: 'body',
-      borderRadius: '8px',
-      cursor: 'pointer',
+      ...buttonStyles,
       border: 'none',
-      color: 'textNeutralPrimary',
       background: 'transparent',
 
       '&:hover': {

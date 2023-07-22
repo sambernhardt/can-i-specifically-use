@@ -5,7 +5,7 @@ const ThemeSwitcher = () => {
 
   return (
     <Button
-      onClick={(e) => {
+      onClick={() => {
         const next = mode === 'dark' ? 'light' : 'dark';
         const stylesheet = document.createElement('style');
         stylesheet.innerHTML = `* { transition-duration: 0s !important; }`;
