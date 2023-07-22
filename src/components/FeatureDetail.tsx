@@ -83,7 +83,7 @@ const FeatureDetail = () => {
     selectedFeature
   } = useGlobalContext();
 
-  const options = ['veryWellSupported', 'moderatelySupported', 'notWellSupported'];
+  const options: supportStatusTypes[] = ['veryWellSupported', 'moderatelySupported', 'notWellSupported'];
   const randomOption = Math.floor(Math.random() * options.length);
   const supportStatus = supportStatuses[options[randomOption]];
 
