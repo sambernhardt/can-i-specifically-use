@@ -6,8 +6,16 @@ const ThemeSwitcher = () => {
   return (
     <Button
       onClick={(e) => {
-        const next = mode === 'dark' ? 'light' : 'dark'
-        setMode(next)
+        const next = mode === 'dark' ? 'light' : 'dark';
+        const stylesheet = document.createElement('style');
+        stylesheet.innerHTML = `* { transition-duration: 0s !important; }`;
+        document.head.appendChild(stylesheet);
+        setMode(next);
+
+        setTimeout(() => {
+          stylesheet.remove();
+        }, 100)
+
       }}
       sx={{
         borderRadius: '8px',
