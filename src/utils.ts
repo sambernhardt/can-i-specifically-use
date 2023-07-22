@@ -22,7 +22,6 @@ export function recursivelyGetCompatData(data: any, path: string, result: any) {
 }
 
 export function recursivelyGetFeatures(data: any, path: string, result: any, parentPath: any = null, level = 0) {
-
   for (const key in data) {
     // If an object has a __compat property, it's a feature that we need to index
     if (key === '__compat') {
@@ -47,6 +46,16 @@ export function recursivelyGetFeatures(data: any, path: string, result: any, par
       recursivelyGetFeatures(data[key], newPath, result, pathWithoutCategory, level + 1);
     }
   }
+}
+
+export type FeatureType = {
+  name: string;
+  path: string;
+  searchablePath: string;
+  category: string;
+  mdn_url: string;
+  spec_url: string;
+  parentPath: string | null;
 }
 
 export function makeGenericMdnDocsUrl(url: string) {

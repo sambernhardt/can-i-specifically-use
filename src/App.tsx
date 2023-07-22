@@ -1,119 +1,64 @@
-import bcd from '@mdn/browser-compat-data';
-import { useMemo, useState } from 'react'
-import './App.css'
-import { recursivelyGetFeatures } from './utils';
-import useDebouncedState from './hooks/useDebouncedState';
-import { get } from 'lodash';
-import Fuse from 'fuse.js';
+import { Box, Flex, Heading, Text } from "theme-ui"
+import FeatureInputSearch from "./components/FeatureSearchInput"
+import FeatureDetail from "./components/FeatureDetail"
+import ThemeSwitcher from "./components/ThemeSwitcher";
 
-const { 
-  __meta,
-  browsers,
-  ...bcdData
-} = bcd as any;
+const HEADER_HEIGHT = '100px';
 
-function App() {
-  const bcdDataAsKeys = useMemo(() => {
-    const compatData: any = {};
-    recursivelyGetFeatures(bcdData, '', compatData);
-    return compatData;
-  }, []);
-
-  const bcdDataAsArray = useMemo(() => {
-    return Object.entries(bcdDataAsKeys).map(([, value]) => value);
-  }, [bcdDataAsKeys]);
-
-  const fuse = useMemo(() => {
-    const options = {
-      includeScore: true,
-      keys: [
-        'name',
-        'searchablePath',
-        'category',
-      ],
-    }
-    
-    return new Fuse(bcdDataAsArray, options)
-  }, [bcdDataAsKeys]);
-
-  const [debouncedSearch, search, setSearch] = useDebouncedState('');
-  const [selectedFeatureId, setSelectedFeatureId] = useState('');
-  const selectedFeature = get(bcdDataAsKeys, selectedFeatureId, {});
-
-  const results = useMemo(() => {
-    const results = fuse.search(debouncedSearch);
-    return results.map((result: any) => result.item).splice(0, 100);
-
-    // const searchTerm = debouncedSearch.toLowerCase();
-    // if (!searchTerm || searchTerm.length < 2) {
-    //   return [];
-    // }
-
-    // // Search by key name
-    // const filteredCompatDataKeys = Object.keys(bcdDataAsKeys)
-    //   .filter((key: string) => {
-    //     const keyWithoutSpecialChars = key.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
-    //     const searchTermWithoutSpecialChars = searchTerm.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
-    //     const nameMatch = keyWithoutSpecialChars.includes(searchTermWithoutSpecialChars);
-    //     if (nameMatch) {
-    //       return true;
-    //     }
-
-    //     if (bcdDataAsKeys[key]?.mdn_url) {
-    //       const mdnUrlMatch = bcdDataAsKeys[key].mdn_url.toLowerCase().includes(makeGenericMdnDocsUrl(searchTerm.toLowerCase()));
-    //       return mdnUrlMatch;
-
-    //     } else {
-    //       return false;
-    //     }
-
-
-    //   }).map((key: string) => {
-    //     return {
-    //       key,
-    //       ...bcdDataAsKeys[key],
-    //     };
-    //   });
-
-    // return filteredCompatDataKeys;
-
-  }, [debouncedSearch, bcdDataAsKeys]);
-
+const App = () => {
   return (
-    <>
-      {selectedFeatureId ? (
+    <Box
+      sx={{
+        bg: 'background',
+        color: 'textNeutralPrimary',
+      }}
+    >
+      <Flex
+        as="header"
+        sx={{
+          bg: 'backgroundSurface',
+          px: 4,
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          height: HEADER_HEIGHT,
+          borderBottom: '1px solid',
+          borderColor: 'borderNeutral',
+        }}
+      >
         <div>
-          <h4><code>{selectedFeature.category}</code></h4>
-          <h3>{selectedFeature.parentPath && <span>{selectedFeature.parentPath}&nbsp;</span>}{selectedFeature.name}</h3>
-          <button onClick={() => setSelectedFeatureId('')}>Clear</button>
-          <pre>
-            {JSON.stringify(selectedFeature, null, 2)}
-          </pre>
-          <pre>
-            {JSON.stringify(get(bcdData, selectedFeature.path, ''), null, 2)}
-          </pre>
+          <Heading>Can I specifically use?</Heading>
+          <Text
+            sx={{
+              color: 'textNeutralSecondary',
+              fontSize: 1,
+            }}
+          >Check browser compatibility for your actual usage data</Text>
         </div>
-      ) : (
-        <>
-          <input
-            type="text"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            autoFocus
-          />
-          <h3>Results</h3>
-          {results.map((result: any) => (
-            <div key={result.path}>
-              <button onClick={() => setSelectedFeatureId(result.path)}>
-                <span>({result.category})&nbsp;</span>
-                {result.parentPath && <span>{result.parentPath}&nbsp;</span>}
-                {result.name}
-              </button>
-            </div>
-          ))}
-        </>
-      )}
-    </>
+        <ThemeSwitcher />
+      </Flex>
+      <Flex
+        sx={{
+          height: `calc(100vh - ${HEADER_HEIGHT})`,
+          p: 4,
+          gap: 4,
+        }}
+      >
+        <Box
+          sx={{
+            width: '400px',
+          }}
+        >
+          <FeatureInputSearch />
+        </Box>
+        <Box
+          sx={{
+            flex: 1,
+          }}
+        >
+          <FeatureDetail />
+        </Box>
+      </Flex>
+    </Box>
   )
 }
 
