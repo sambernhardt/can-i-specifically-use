@@ -10,7 +10,7 @@ const router = createBrowserRouter([
     },
   },
   {
-    path: "/feature/:featureId",
+    path: "/feature/",
     loader: async ({ params }) => {
       return params;
     },
