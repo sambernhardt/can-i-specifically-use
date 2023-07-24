@@ -5,6 +5,7 @@ const ThemeSwitcher = () => {
 
   return (
     <Button
+      variant="ghost"
       onClick={() => {
         const next = mode === 'dark' ? 'light' : 'dark';
         const stylesheet = document.createElement('style');
@@ -23,11 +24,6 @@ const ThemeSwitcher = () => {
         fontSize: 1,
       }}
     >
-      <Text
-        sx={{
-          display: ['none', 'inline-block']
-        }}
-      >Toggle theme&nbsp;&nbsp;</Text>
       {mode === 'dark' ? '☀️' : '🌙'}
     </Button>
   )
