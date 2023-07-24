@@ -1,6 +1,5 @@
 import { useMemo, useRef, useState } from 'react'
 import Fuse from 'fuse.js';
-import { useGlobalContext } from './ContextProvider';
 import { Box, Button, Flex, Text } from 'theme-ui';
 import { Cancel, Search } from 'iconoir-react';
 import Icon from './Icon';
@@ -13,10 +12,6 @@ import { bcdDataAsArray, bcdDataAsKeys } from '../data';
 
 const FeatureInputSearch = () => {
   let navigate = useNavigate();
-  const {
-    setSelectedFeatureId,
-    selectedFeature,
-  } = useGlobalContext();
 
   const fuse = useMemo(() => {
     const options = {
@@ -31,7 +26,7 @@ const FeatureInputSearch = () => {
     return new Fuse(bcdDataAsArray, options)
   }, [bcdDataAsKeys]);
 
-  const [search, setSearch] = useState(selectedFeature ? selectedFeature.searchablePath : '');
+  const [search, setSearch] = useState('');
   const debouncedSearch = useDebounce<string>(search, 20);
   const [showResults, setShowResults] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -56,7 +51,7 @@ const FeatureInputSearch = () => {
           ref={inputRef}
           type="text"
           autoFocus
-          placeholder="Search"
+          placeholder="Search MDN"
           value={search}
           onChange={e => {
             if (e.target.value.length === 0) {
@@ -103,7 +98,6 @@ const FeatureInputSearch = () => {
                 variant="ghost"
                 onClick={() => {
                   setSearch('');
-                  setSelectedFeatureId('');
                   inputRef.current?.focus();
                   navigate('/');
                 }}
@@ -137,9 +131,8 @@ const FeatureInputSearch = () => {
               <div key={result.path}>
                 <Button
                   onClick={() => {
-                    setSelectedFeatureId(result.path);
                     setShowResults(false);
-                    setSearch(result.searchablePath);
+                    setSearch('');
 
                     navigate(`/feature/${result.path.replace(/\./g, '+')}`);
                   }}

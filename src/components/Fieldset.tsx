@@ -23,7 +23,7 @@ const Fieldset: FC<FieldsetProps> = ({
       >
         <Label
           sx={{
-            pl: 2,
+            pl: 1,
             width: 'auto',
           }}
         >

@@ -1,29 +1,9 @@
-import React, { FC, PropsWithChildren, useContext, useState } from 'react'
-import { get } from 'lodash';
-import { useLoaderData } from 'react-router-dom';
-import { FeatureType } from '../utils';
-import { bcdDataAsKeys } from '../data';
-
-type ContextType = {
-  bcdData: any,
-  bcdDataAsKeys: Record<string, FeatureType>,
-  bcdDataAsArray: FeatureType[],
-  selectedFeatureId: string,
-  setSelectedFeatureId: (id: string) => void,
-  selectedFeature: FeatureType,
-}
+import React, { FC, PropsWithChildren, useContext } from 'react'
 
 export const GlobalContext = React.createContext({});
 
 const ContextProvider: FC<PropsWithChildren> = ({ children }) => {
-  const { featureId } = useLoaderData() as { featureId: string };
-  const [selectedFeatureId, setSelectedFeatureId] = useState(featureId ? featureId.replace(/\+/g, '.') : '');
-  const selectedFeature = get(bcdDataAsKeys, selectedFeatureId);
-
-  const context = {
-    selectedFeatureId, setSelectedFeatureId,
-    selectedFeature,
-  }
+  const context = {}
 
   return (
     <GlobalContext.Provider value={context}>
@@ -35,7 +15,7 @@ const ContextProvider: FC<PropsWithChildren> = ({ children }) => {
 export default ContextProvider
 
 export const useGlobalContext = () => {
-  const context = useContext(GlobalContext) as ContextType;
+  const context = useContext(GlobalContext);
   if (context === undefined) {
     throw new Error('useGlobalContext must be used within a ContextProvider')
   }

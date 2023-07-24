@@ -1,25 +1,15 @@
-import { useLayoutEffect } from "react";
 import { Box, Divider, Flex, Heading, Link, Text } from "theme-ui"
 import FeatureInputSearch from "./components/FeatureSearchInput"
 import FeatureDetail from "./components/FeatureDetail"
 import ThemeSwitcher from "./components/ThemeSwitcher";
-import { useLoaderData } from "react-router-dom";
-import { useGlobalContext } from "./components/ContextProvider";
 import Fieldset from "./components/Fieldset";
 import TextInput from "./components/input/TextInput";
+import Icon from "./components/Icon";
+import { CloudUpload } from "iconoir-react";
 
 const HEADER_HEIGHT = '80px';
 
 const App = () => {
-  const { setSelectedFeatureId } = useGlobalContext();
-  const { featureId } = useLoaderData() as { featureId: string };
-
-  useLayoutEffect(() => {
-    if (featureId) {
-      const featureIdKey = featureId.replace(/\+/g, '.');
-      setSelectedFeatureId(featureIdKey);
-    }
-  }, [featureId]);
 
   return (
     <Box
@@ -40,7 +30,13 @@ const App = () => {
           borderColor: 'borderNeutralPrimary',
         }}
       >
-        <div>
+        <Link
+          href="/"
+          sx={{
+            color: 'textNeutralPrimary',
+            textDecoration: 'none',
+          }}
+        >
           <Heading as="h4">Can I specifically use... ?</Heading>
           <Text
             sx={{
@@ -48,15 +44,15 @@ const App = () => {
               fontSize: 1,
             }}
           >Check browser compatibility for your actual usage data</Text>
-        </div>
+        </Link>
         <ThemeSwitcher />
       </Flex>
       <Flex
         sx={{
           flexDirection: ['column', 'column', 'row'],
           height: `calc(100vh - ${HEADER_HEIGHT})`,
-          p: [4, 6],
-          gap: [4, 6],
+          p: [4, 5],
+          gap: [4, 5],
         }}
       >
         <Flex
@@ -69,21 +65,53 @@ const App = () => {
         >
           <FeatureInputSearch />
           <Fieldset
-            label="Usage data"
-            labelAction={(
-              <Link
+            label="Upload usage data"
+          >
+            <Flex
+               sx={{
+                flexDirection: 'column',
+                alignItems: 'center',
+                p: 5,
+                gap: 2,
+                width: '100%',
+                borderRadius: '12px',
+                border: '1px dashed',
+                borderColor: 'borderNeutralPrimary',
+                boxShadow: 'default',
+                transition: 'all 0.2s ease-in-out',
+      
+                '&:focus': {
+                  outline: 'none',
+                  borderColor: 'borderFocus',
+                  boxShadow: 'focus',
+                },
+              }}
+            >
+              <Icon
+                icon={CloudUpload}
                 sx={{
-                  fontSize: 1,
-                  whiteSpace: 'nowrap',
+                  color: 'textNeutralSecondary',
+                }}
+              />
+              <Text
+                sx={{
+                  color: 'textNeutralSecondary',
+                  fontSize: 0,
                 }}
               >
-                Edit dataset
-              </Link>
-            )}
-          >
-            <TextInput
-              placeholder="Search"
-            />
+                Upload CSV
+              </Text>
+            </Flex>
+            <Link
+              sx={{
+                display: 'inline-block',
+                mt: 2,
+                fontSize: 0,
+                whiteSpace: 'nowrap',
+              }}
+            >
+              Download template
+            </Link>
           </Fieldset>
         </Flex>
         <Box

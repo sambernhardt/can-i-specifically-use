@@ -6,6 +6,8 @@ import Message from './Message';
 import { CheckCircle, WarningCircle, Link as LinkIcon } from 'iconoir-react';
 import SupportCard from './SupportCard';
 import Icon from './Icon';
+import { useLoaderData } from 'react-router-dom';
+import { bcdDataAsKeys } from '../data';
 
 type supportStatusTypes = 'veryWellSupported' | 'moderatelySupported' | 'notWellSupported';
 
@@ -76,11 +78,13 @@ function calculateFontSizeMobile(length: number) {
 }
 
 const FeatureDetail = () => {
-  const {
-    bcdData,
-    selectedFeatureId,
-    selectedFeature
-  } = useGlobalContext();
+  const { featureId } = useLoaderData() as { featureId: string };
+  if (!featureId) {
+    return null;
+  }
+
+  const featureIdPath = featureId.replace(/\+/g, '.');
+  const selectedFeature = get(bcdDataAsKeys, featureIdPath);
 
   const options: supportStatusTypes[] = ['veryWellSupported', 'moderatelySupported', 'notWellSupported'];
   const randomOption = Math.floor(Math.random() * options.length);
@@ -88,7 +92,7 @@ const FeatureDetail = () => {
 
   return (
     <div>
-      {selectedFeatureId ? (
+      {featureIdPath ? (
         <div>
           <Flex
             sx={{
@@ -204,7 +208,7 @@ const FeatureDetail = () => {
                 {JSON.stringify(selectedFeature, null, 2)}
               </pre>
               <pre>
-                {JSON.stringify(get(bcdData, selectedFeature.path, ''), null, 2)}
+                {JSON.stringify(get(bcdDataAsKeys, selectedFeature.path, ''), null, 2)}
               </pre>
             </Box>
           </Flex>

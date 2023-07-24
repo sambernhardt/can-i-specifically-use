@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import Providers from './components/Providers.tsx'
-import { RouterProvider, createBrowserRouter } from 'react-router-dom'
+import { RouterProvider, createBrowserRouter, redirect } from 'react-router-dom'
 import App from './App.tsx'
 import './index.css';
 
@@ -15,14 +15,12 @@ const router = createBrowserRouter([
     ),
     loader: async ({ params }) => {
       return params;
-      // return { get(bcdDataAsKeys, selectedFeatureId)};
     },
   },
   {
     path: "/feature/:featureId",
     loader: async ({ params }) => {
       return params;
-      // return { get(bcdDataAsKeys, selectedFeatureId)};
     },
     element: (
       <Providers>
@@ -30,6 +28,18 @@ const router = createBrowserRouter([
       </Providers>
     ),
   },
+  // Redirect all other paths to the home page
+  {
+    path: "*",
+    loader: async () => {
+      return redirect("/");
+    },
+    element: (
+      <Providers>
+        <App />
+      </Providers>
+    ),
+  }
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
