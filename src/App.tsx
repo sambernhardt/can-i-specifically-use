@@ -3,7 +3,6 @@ import FeatureInputSearch from "./components/FeatureSearchInput"
 import FeatureDetail from "./components/FeatureDetail"
 import ThemeSwitcher from "./components/ThemeSwitcher";
 import Fieldset from "./components/Fieldset";
-import TextInput from "./components/input/TextInput";
 import Icon from "./components/Icon";
 import { CloudUpload } from "iconoir-react";
 
