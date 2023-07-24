@@ -1,4 +1,4 @@
-import { Button, Text, useColorMode } from 'theme-ui'
+import { Button, useColorMode } from 'theme-ui'
 
 const ThemeSwitcher = () => {
   const [mode, setMode] = useColorMode()
