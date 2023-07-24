@@ -1,5 +1,4 @@
 import { get } from 'lodash';
-import { useGlobalContext } from './ContextProvider'
 import { Box, Flex, Heading, Link, Text } from 'theme-ui';
 import CategoryBadge from './CategoryBadge';
 import Message from './Message';
@@ -16,6 +15,10 @@ type SupportStatusShape = {
   heading: string,
   message: string,
   palette: 'success' | 'warning' | 'danger',
+  fakeStats: {
+    supported: number,
+    notSupported: number,
+  }
 }
 
 const supportStatuses: Record<supportStatusTypes, SupportStatusShape> = {
@@ -24,18 +27,30 @@ const supportStatuses: Record<supportStatusTypes, SupportStatusShape> = {
     heading: 'Very well supported',
     message: `The selected API is widely supported by most modern browsers, but it's recommended to have fallback options in place for a small percentage of users who may encounter compatibility issues.`,
     palette: 'success',
+    fakeStats: {
+      supported: 9800,
+      notSupported: 784,
+    },
   },
   moderatelySupported: {
     icon: WarningCircle,
     heading: 'Moderately supported',
     message: `The selected API has moderate support across various browsers, making it a viable choice for a significant portion of users. However, be aware that some browsers may have limitations or inconsistencies. Thorough testing and graceful fallback options are advised.`,
     palette: 'warning',
+    fakeStats: {
+      supported: 4200,
+      notSupported: 3064,
+    },
   },
   notWellSupported: {
     icon: WarningCircle,
     heading: 'Not well supported',
     message: `Consider exploring alternative solutions or providing alternative workflows to accommodate users who may not have access to this API. Testing and graceful degradation strategies are essential.`,
     palette: 'danger',
+    fakeStats: {
+      supported: 1184,
+      notSupported: 7800,
+    },
   },
 };
 
@@ -80,7 +95,35 @@ function calculateFontSizeMobile(length: number) {
 const FeatureDetail = () => {
   const { featureId } = useLoaderData() as { featureId: string };
   if (!featureId) {
-    return null;
+    return (
+      <Flex
+        sx={{
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100%',
+          gap: 4,
+          color: 'textNeutralSecondary',
+        }}
+      >
+        <Text
+          sx={{
+            fontSize: 4,
+            color: 'inherit'
+          }}
+        >
+          “I wonder if we can use this feature with our current users”
+        </Text>
+        <Text
+          sx={{
+            fontSize: 2,
+            color: 'inherit'
+          }}
+        >
+          - Me, frequently
+        </Text>
+      </Flex>
+    );
   }
 
   const featureIdPath = featureId.replace(/\+/g, '.');
@@ -89,6 +132,7 @@ const FeatureDetail = () => {
   const options: supportStatusTypes[] = ['veryWellSupported', 'moderatelySupported', 'notWellSupported'];
   const randomOption = Math.floor(Math.random() * options.length);
   const supportStatus = supportStatuses[options[randomOption]];
+  const totalUsers = supportStatus.fakeStats.supported + supportStatus.fakeStats.notSupported;
 
   return (
     <div>
@@ -187,15 +231,15 @@ const FeatureDetail = () => {
             >
               <SupportCard
                 label="Supported"
-                stat="92%"
+                stat={`${Math.round((supportStatus.fakeStats.supported / totalUsers) * 100)}%`}
                 icon={CheckCircle}
-                subtext='9,800 users'
+                subtext={`${supportStatus.fakeStats.supported} users`}
               />
               <SupportCard
                 label="Not supported"
-                stat="8%"
+                stat={`${Math.round((supportStatus.fakeStats.notSupported / totalUsers) * 100)}%`}
                 icon={WarningCircle}
-                subtext='784 users'
+                subtext={`${supportStatus.fakeStats.notSupported} users`}
               />
             </Flex>
             <Box
