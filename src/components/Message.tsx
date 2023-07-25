@@ -54,6 +54,7 @@ const Message: FC<Props> = ({
       sx={{
         flexDirection: ['column', 'row'],
         borderRadius: '16px',
+        width: '100%',
         p: 4,
         gap: 3,
         bg: background,

@@ -3,8 +3,10 @@ import { FeatureType, recursivelyGetFeatures } from './utils';
 const { 
   __meta,
   browsers,
-  ...bcdData
+  ..._bcdData
 } = bcd as any;
+
+export const bcdData = _bcdData;
 
 const getBcdDataAsKeys = (): Record<string, FeatureType> => {
   const compatData: any = {};

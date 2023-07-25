@@ -1,3 +1,5 @@
+import { coerce, gte, valid } from "semver";
+
 function isObject(obj: any) {
   return (
     typeof obj === 'object' &&
@@ -60,4 +62,41 @@ export type FeatureType = {
 
 export function makeGenericMdnDocsUrl(url: string) {
   return url.replace('/en-us/', '/');
+}
+
+export function parseCSV(csv: string) {
+  const rows = csv.split('\n');
+  const headers = rows[0].split(',');
+  const result: Record<string, string>[] = [];
+  rows.slice(1).forEach(row => {
+    const obj: any = {};
+    const rowData = row.split(',');
+    headers.forEach((header, i) => {
+      obj[header] = rowData[i];
+    });
+    result.push(obj);
+  });
+  return result;
+}
+
+export function isCompatible(compatData: any, browserKey: string, version: string) {
+  try {
+    const { version_added: minimumCompatibleVersion } = compatData[browserKey];
+    if (version === null || minimumCompatibleVersion === null) {
+      console.error('Missing version or minimum compatible version');
+      return false;
+    }
+
+    const validVersion = valid(coerce(version));
+    const validMinimumCompatibleVersion = valid(coerce(minimumCompatibleVersion));
+
+    if (validVersion !== null && validMinimumCompatibleVersion !== null) {
+      return gte(validVersion, validMinimumCompatibleVersion);
+    } else {
+      return false;
+    }
+  } catch (e) {
+    console.error(e);
+    return false;
+  }
 }

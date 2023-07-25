@@ -9,7 +9,6 @@ import CategoryBadge from './CategoryBadge';
 import { useNavigate } from "react-router-dom";
 import { bcdDataAsArray, bcdDataAsKeys } from '../data';
 
-
 const FeatureInputSearch = () => {
   let navigate = useNavigate();
 
@@ -37,7 +36,6 @@ const FeatureInputSearch = () => {
   }, [debouncedSearch, fuse]);
 
   const shouldShowResults = search.length > 0 && showResults;
-
   const showClearButton = search.length > 0;
 
   return (

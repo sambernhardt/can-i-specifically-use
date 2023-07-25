@@ -1,14 +1,45 @@
-import { Box, Divider, Flex, Heading, Link, Text } from "theme-ui"
+import { Box, Button, Divider, Flex, Heading, Input, Link, Text } from "theme-ui"
 import FeatureInputSearch from "./components/FeatureSearchInput"
 import FeatureDetail from "./components/FeatureDetail"
 import ThemeSwitcher from "./components/ThemeSwitcher";
 import Fieldset from "./components/Fieldset";
 import Icon from "./components/Icon";
 import { CloudUpload } from "iconoir-react";
+import exampleData from './exampleData.csv?raw';
+import usePersistedState from "./hooks/usePersistedState";
 
 const HEADER_HEIGHT = '80px';
 
+export type CSVDataType = {
+  name: string;
+  data: string;
+  uploadedAt: string;
+}
+
 const App = () => {
+  const [csvData, setCSVData] = usePersistedState<CSVDataType | null>('csvData', {
+    data: exampleData,
+    name: 'exampleData.csv',
+    uploadedAt: new Date().toISOString(),
+  });
+
+  function handleFileUpload(e: any) {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      const csvData = e.target?.result;
+      if (typeof csvData === 'string') {
+        setCSVData({
+          data: csvData,
+          name: file.name,
+          uploadedAt: new Date().toISOString(),
+        });
+      }
+    }
+
+    reader.readAsText(file);
+  }
 
   return (
     <Box
@@ -49,7 +80,7 @@ const App = () => {
       <Flex
         sx={{
           flexDirection: ['column', 'column', 'row'],
-          height: `calc(100vh - ${HEADER_HEIGHT})`,
+          minHeight: `calc(100vh - ${HEADER_HEIGHT})`,
           p: [4, 5],
           gap: [4, 5],
         }}
@@ -63,55 +94,98 @@ const App = () => {
           }}
         >
           <FeatureInputSearch />
-          <Fieldset
-            label="Upload usage data"
-          >
-            <Flex
-               sx={{
-                flexDirection: 'column',
-                alignItems: 'center',
-                p: 5,
-                gap: 2,
-                width: '100%',
-                borderRadius: '12px',
-                border: '1px dashed',
-                borderColor: 'borderNeutralPrimary',
-                boxShadow: 'default',
-                transition: 'all 0.2s ease-in-out',
-      
-                '&:focus': {
-                  outline: 'none',
-                  borderColor: 'borderFocus',
-                  boxShadow: 'focus',
-                },
-              }}
+          {csvData ? (
+            <Fieldset
+              label="Uploaded usage data"
             >
-              <Icon
-                icon={CloudUpload}
+              <Button>
+                {csvData.name}
+              </Button>
+              <Link
                 sx={{
-                  color: 'textNeutralSecondary',
-                }}
-              />
-              <Text
-                sx={{
-                  color: 'textNeutralSecondary',
+                  display: 'inline-block',
+                  ml: 3,
                   fontSize: 0,
+                  whiteSpace: 'nowrap',
+                }}
+                onClick={() => {
+                  setCSVData(null);
                 }}
               >
-                Upload CSV
-              </Text>
-            </Flex>
-            <Link
-              sx={{
-                display: 'inline-block',
-                mt: 2,
-                fontSize: 0,
-                whiteSpace: 'nowrap',
-              }}
-            >
-              Download template
-            </Link>
-          </Fieldset>
+                Clear
+              </Link>
+            </Fieldset>  
+          ) : (
+            <>
+              <Box>
+                <Fieldset
+                  label="Upload usage data"
+                >
+
+                  <Flex
+                    sx={{
+                      position: 'relative',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      p: 5,
+                      gap: 2,
+                      width: '100%',
+                      borderRadius: '12px',
+                      border: '1px dashed',
+                      borderColor: 'borderNeutralPrimary',
+                      boxShadow: 'default',
+                      transition: 'all 0.2s ease-in-out',
+            
+                      '&:focus': {
+                        outline: 'none',
+                        borderColor: 'borderFocus',
+                        boxShadow: 'focus',
+                      },
+                    }}
+                  >
+                    <Input
+                      type="file"
+                      accept=".csv"
+                      onChange={handleFileUpload}
+                      sx={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        opacity: 0,
+                        cursor: 'pointer',
+                      }}
+                    />
+                    <Icon
+                      icon={CloudUpload}
+                      sx={{
+                        color: 'textNeutralSecondary',
+                      }}
+                    />
+                    <Text
+                      sx={{
+                        color: 'textNeutralSecondary',
+                        fontSize: 0,
+                      }}
+                    >
+                      Upload CSV
+                    </Text>
+                  </Flex>
+                </Fieldset>
+                <Link
+                  sx={{
+                    display: 'inline-block',
+                    mt: 3,
+                    fontSize: 0,
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  Download template
+                </Link>
+              </Box>
+            </>
+          )}
         </Flex>
         <Box
           sx={{
@@ -129,11 +203,10 @@ const App = () => {
         />
         <Box
           sx={{
-            flex: 2,
-            maxWidth: '1000px',
+            flex: 3,
           }}
         >
-          <FeatureDetail />
+          <FeatureDetail csvData={csvData ? csvData.data : ''} />
         </Box>
       </Flex>
     </Box>

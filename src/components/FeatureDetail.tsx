@@ -1,58 +1,63 @@
-import { get } from 'lodash';
+import _, { get } from 'lodash';
 import { Box, Flex, Heading, Link, Text } from 'theme-ui';
+import { CheckCircle, WarningCircle, Link as LinkIcon } from 'iconoir-react';
+import { useLoaderData } from 'react-router-dom';
+
 import CategoryBadge from './CategoryBadge';
 import Message from './Message';
-import { CheckCircle, WarningCircle, Link as LinkIcon } from 'iconoir-react';
 import SupportCard from './SupportCard';
 import Icon from './Icon';
-import { useLoaderData } from 'react-router-dom';
-import { bcdDataAsKeys } from '../data';
+import { bcdData, bcdDataAsKeys } from '../data';
 
-type supportStatusTypes = 'veryWellSupported' | 'moderatelySupported' | 'notWellSupported';
+import useCanIUseData from '../hooks/useCanIUseData';
+import CompatibilityTable from './CompatibilityTable';
+import FakeTable from './FakeTable';
 
-type SupportStatusShape = {
+export type SupportStatusShape = {
   icon: React.FC,
   heading: string,
   message: string,
   palette: 'success' | 'warning' | 'danger',
-  fakeStats: {
-    supported: number,
-    notSupported: number,
-  }
+  // fakeStats: {
+  //   supported: number,
+  //   notSupported: number,
+  // }
 }
 
-const supportStatuses: Record<supportStatusTypes, SupportStatusShape> = {
+const supportStatuses: Record<string, SupportStatusShape> = {
   veryWellSupported: {
     icon: CheckCircle,
     heading: 'Very well supported',
     message: `The selected API is widely supported by most modern browsers, but it's recommended to have fallback options in place for a small percentage of users who may encounter compatibility issues.`,
     palette: 'success',
-    fakeStats: {
-      supported: 9800,
-      notSupported: 784,
-    },
+    // fakeStats: {
+    //   supported: 9800,
+    //   notSupported: 784,
+    // },
   },
   moderatelySupported: {
     icon: WarningCircle,
     heading: 'Moderately supported',
     message: `The selected API has moderate support across various browsers, making it a viable choice for a significant portion of users. However, be aware that some browsers may have limitations or inconsistencies. Thorough testing and graceful fallback options are advised.`,
     palette: 'warning',
-    fakeStats: {
-      supported: 4200,
-      notSupported: 3064,
-    },
+    // fakeStats: {
+    //   supported: 4200,
+    //   notSupported: 3064,
+    // },
   },
   notWellSupported: {
     icon: WarningCircle,
     heading: 'Not well supported',
     message: `Consider exploring alternative solutions or providing alternative workflows to accommodate users who may not have access to this API. Testing and graceful degradation strategies are essential.`,
     palette: 'danger',
-    fakeStats: {
-      supported: 1184,
-      notSupported: 7800,
-    },
+    // fakeStats: {
+    //   supported: 1184,
+    //   notSupported: 7800,
+    // },
   },
 };
+
+export type SupportStatusKey = keyof typeof supportStatuses;
 
 // The smaller the length, the larger the font size
 function calculateFontSize(length: number) {
@@ -92,7 +97,7 @@ function calculateFontSizeMobile(length: number) {
   }
 }
 
-const FeatureDetail = () => {
+const FeatureDetail = ({ csvData }: { csvData: any }) => {
   const { featureId } = useLoaderData() as { featureId: string };
   if (!featureId) {
     return (
@@ -100,6 +105,7 @@ const FeatureDetail = () => {
         sx={{
           flexDirection: 'column',
           justifyContent: 'center',
+          textAlign: 'center',
           alignItems: 'center',
           height: '100%',
           gap: 4,
@@ -128,14 +134,28 @@ const FeatureDetail = () => {
 
   const featureIdPath = featureId.replace(/\+/g, '.');
   const selectedFeature = get(bcdDataAsKeys, featureIdPath);
+  const selectedFeatureCompatibilityData = get(bcdData, selectedFeature.path + '.__compat.support', '');
 
-  const options: supportStatusTypes[] = ['veryWellSupported', 'moderatelySupported', 'notWellSupported'];
-  const randomOption = Math.floor(Math.random() * options.length);
-  const supportStatus = supportStatuses[options[randomOption]];
-  const totalUsers = supportStatus.fakeStats.supported + supportStatus.fakeStats.notSupported;
+  const {
+    parsedCSVData,
+    percentageSupported,
+    percentageNotSupported,
+    numberSupported,
+    numberNotSupported,
+    supportMessageKey
+  } = useCanIUseData(csvData, selectedFeatureCompatibilityData);
+
+  const supportStatus = supportStatuses[supportMessageKey];
+
+  console.log({csvData, parsedCSVData})
 
   return (
-    <div>
+    <Box
+      sx={{
+        maxWidth: '1000px',
+        mb: 7
+      }}
+    >
       {featureIdPath ? (
         <div>
           <Flex
@@ -216,51 +236,103 @@ const FeatureDetail = () => {
                 </Link>
               </Flex>
             </Flex>
-            <Message
-              heading={supportStatus.heading}
-              icon={supportStatus.icon}
-              palette={supportStatus.palette}
-            >
-              {supportStatus.message}
-            </Message>
-            <Flex
-              sx={{
-                gap: 4,
-                width: '100%',
-              }}
-            >
-              <SupportCard
-                label="Supported"
-                stat={`${Math.round((supportStatus.fakeStats.supported / totalUsers) * 100)}%`}
-                icon={CheckCircle}
-                subtext={`${supportStatus.fakeStats.supported} users`}
-              />
-              <SupportCard
-                label="Not supported"
-                stat={`${Math.round((supportStatus.fakeStats.notSupported / totalUsers) * 100)}%`}
-                icon={WarningCircle}
-                subtext={`${supportStatus.fakeStats.notSupported} users`}
-              />
-            </Flex>
-            <Box
-              sx={{
-                overflow: 'auto',
-                width: '100%',
-              }}
-            >
-              <pre>
-                {JSON.stringify(selectedFeature, null, 2)}
-              </pre>
-              <pre>
-                {JSON.stringify(get(bcdDataAsKeys, selectedFeature.path, ''), null, 2)}
-              </pre>
-            </Box>
+            {csvData ? (
+              <>  
+                <Message
+                  heading={supportStatus.heading}
+                  icon={supportStatus.icon}
+                  palette={supportStatus.palette}
+                >
+                  {supportStatus.message}
+                </Message>
+                <Flex
+                  sx={{
+                    gap: 4,
+                    width: '100%',
+                  }}
+                >
+                  <SupportCard
+                    label="Supported"
+                    stat={`${percentageSupported}%`}
+                    icon={CheckCircle}
+                    subtext={`${numberSupported} users`}
+                  />
+                  <SupportCard
+                    label="Not supported"
+                    stat={`${percentageNotSupported}%`}
+                    icon={WarningCircle}
+                    subtext={`${numberNotSupported} users`}
+                  />
+                </Flex>
+                <Box
+                  sx={{
+                    overflow: 'auto',
+                    width: '100%',
+                  }}
+                >
+                  <CompatibilityTable data={parsedCSVData} />
+                  {/* <pre>
+                    {csvData}
+                  </pre>
+                  <pre>
+                    {JSON.stringify(selectedFeatureCompatibilityData, null, 2)}
+                  </pre> */}
+                </Box>
+              </>
+            ) : (
+              <Flex
+                sx={{
+                  position: 'relative',
+                  width: '100%',
+                  flexDirection: 'column',
+                  alignItems: 'flex-start',
+                  gap: 4,
+                filter: 'blur(7px)',
+                }}
+              >
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    background: theme => `linear-gradient(180deg, transparent 0%, ${theme.colors!.background} 100%)`,
+                    width: '100%',
+                    height: '100%',
+                  }}
+                />
+                <Message
+                  palette="neutral"
+                  icon={WarningCircle}
+                  heading="No usage data uploaded"
+                >
+                  Upload a CSV file with your usage data to see how many users are affected by this feature.
+                </Message>
+                <Flex
+                  sx={{
+                    gap: 4,
+                    width: '100%',
+                  }}
+                >
+                  <SupportCard
+                    label="Supported"
+                    stat={`${30}%`}
+                    icon={CheckCircle}
+                    subtext={`${numberSupported} users`}
+                  />
+                  <SupportCard
+                    label="Not supported"
+                    stat={`${70}%`}
+                    icon={WarningCircle}
+                    subtext={`${numberNotSupported} users`}
+                  />
+                </Flex>
+                <FakeTable selectedFeatureCompatibilityData={selectedFeatureCompatibilityData} />
+              </Flex>
+            )}
           </Flex>
         </div>
       ) : (
         <p>Nothing selected</p>
       )}
-    </div>
+    </Box>
   );
 }
 
