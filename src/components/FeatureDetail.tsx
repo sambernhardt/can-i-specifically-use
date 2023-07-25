@@ -11,7 +11,7 @@ import { bcdData, bcdDataAsKeys } from '../data';
 
 import useCanIUseData from '../hooks/useCanIUseData';
 import CompatibilityTable from './CompatibilityTable';
-import FakeTable from './FakeTable';
+import PlaceholderDetail from './PlaceholderDetail';
 
 export type SupportStatusShape = {
   icon: React.FC,
@@ -227,6 +227,9 @@ const FeatureDetail = ({ csvData }: { csvData: any }) => {
                     py: 2,
                     borderRadius: '8px',
                     fontSize: 2,
+
+                    opacity: selectedFeature.mdn_url ? 1 : 0,
+                    pointerEvents: selectedFeature.mdn_url ? 'auto' : 'none',
                   }}
                 >
                   View on MDN
@@ -271,54 +274,7 @@ const FeatureDetail = ({ csvData }: { csvData: any }) => {
                   <CompatibilityTable data={parsedCSVData} />
                 </Box>
               </>
-            ) : (
-              <Flex
-                sx={{
-                  position: 'relative',
-                  width: '100%',
-                  flexDirection: 'column',
-                  alignItems: 'flex-start',
-                  gap: 4,
-                filter: 'blur(7px)',
-                }}
-              >
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    background: theme => `linear-gradient(180deg, transparent 0%, ${theme.colors!.background} 100%)`,
-                    width: '100%',
-                    height: '100%',
-                  }}
-                />
-                <Message
-                  palette="neutral"
-                  icon={WarningCircle}
-                  heading="No usage data uploaded"
-                >
-                  Upload a CSV file with your usage data to see how many users are affected by this feature.
-                </Message>
-                <Flex
-                  sx={{
-                    gap: 4,
-                    width: '100%',
-                  }}
-                >
-                  <SupportCard
-                    label="Supported"
-                    stat={`${30}%`}
-                    icon={CheckCircle}
-                    subtext={`${numberSupported} users`}
-                  />
-                  <SupportCard
-                    label="Not supported"
-                    stat={`${70}%`}
-                    icon={WarningCircle}
-                    subtext={`${numberNotSupported} users`}
-                  />
-                </Flex>
-                <FakeTable selectedFeatureCompatibilityData={selectedFeatureCompatibilityData} />
-              </Flex>
-            )}
+            ) : <PlaceholderDetail selectedFeatureCompatibilityData={selectedFeatureCompatibilityData} />}
           </Flex>
         </div>
       ) : (

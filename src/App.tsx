@@ -63,13 +63,16 @@ const App = () => {
           sx={{
             color: 'textNeutralPrimary',
             textDecoration: 'none',
+            lineHeight: '1em'
           }}
         >
           <Heading as="h4">Can I specifically use... ?</Heading>
           <Text
             sx={{
+              display: 'block',
               color: 'textNeutralSecondary',
               fontSize: 1,
+              mt: 1,
             }}
           >Check browser compatibility for your actual usage data</Text>
         </Link>
