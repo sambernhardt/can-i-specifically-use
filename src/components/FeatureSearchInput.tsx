@@ -97,7 +97,6 @@ const FeatureInputSearch = () => {
                 onClick={() => {
                   setSearch('');
                   inputRef.current?.focus();
-                  navigate('/');
                 }}
                 sx={{
                   display: 'inline-flex',

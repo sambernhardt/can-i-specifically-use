@@ -1,44 +1,65 @@
-import { Box } from 'theme-ui';
+import { Box, Flex, Text } from 'theme-ui';
+import { DecoratedUsageDataType } from '../types';
+import { Fragment } from 'react';
 
-const CompatibilityTable = ({ data }: { data: any }) => {
-
+const CompatibilityTable = ({ data }: { data: DecoratedUsageDataType[] }) => {
   const tableContents: {
     header: string,
-    cell: (d: any) => string,
+    cell: (d: DecoratedUsageDataType, idx: number) => string | JSX.Element,
   }[] = [
     {
       header: 'Browser',
-      cell: d => d['Browser'],
+      cell: d => d.Browser,
     },
     {
       header: 'Version',
-      cell: d => d['Browser Version'],
+      cell: (d, rowIndex) => (
+        <Flex
+          sx={{
+            gap: '2px',
+            fontFamily: 'monospace'
+          }}
+        >
+          {d['Browser Version'].split('.').map((part: string, partIdx) => (
+            <Fragment key={[d.Browser, d['Browser Version'], rowIndex, partIdx].join('-')}>
+              <Text sx={{ fontFamily: 'inherit' }}>
+                {part}
+              </Text>
+              <Text
+                sx={{
+                  fontFamily: 'inherit',
+                  color: 'textNeutralSecondary',
+                  '&:last-of-type': {
+                    display: 'none',
+                  },
+                }}
+              >
+                .
+              </Text>
+            </Fragment>
+          ))}
+        </Flex>
+      )
     },
     {
       header: 'Device category',
       cell: d => d['Device Category'],
     },
-    // {
-    //   header: 'Browser key',
-    //   cell: d => d['Browser key'],
-    // },
     {
       header: 'Users',
       cell: d => d['Users'],
     },
     {
       header: 'Compatible',
-      cell: d => d['Compatible'],
+      cell: d => {
+        if (d.Compatible === null) {
+          return 'Unknown'
+        } else {
+          return d['Compatible'] ? 'Yes' : 'No'
+        }
+      }
     },
-    // {
-    //   header: 'Support added',
-    //   cell: d => d['Support added'],
-    // },
-    // {
-    //   header: 'Notes',
-    //   cell: d => d['Notes'],
-    // },
-  ]
+  ];
 
   return (
     <Box
@@ -65,12 +86,18 @@ const CompatibilityTable = ({ data }: { data: any }) => {
         </tr>
       </thead>
       <tbody>
-        {data.map((row: any, idx: any) => (
-          <tr key={`row-${idx}`}>
-            {tableContents.map(({ cell }, idx) => (
-              <td key={`cell-${idx}`}>
-                {cell(row)}
-              </td>
+        {data.map((row: any, rowIdx: any) => (
+          <tr key={`row-${rowIdx}`}>
+            {tableContents.map(({ cell }, cellIdx) => (
+              <Box
+                as="td"
+                key={`cell-${rowIdx}-${cellIdx}`}
+                sx={{
+                  fontFamily: 'monospace'
+                }}
+              >
+                {cell(row, rowIdx)}
+              </Box>
             ))}
           </tr>
         ))}

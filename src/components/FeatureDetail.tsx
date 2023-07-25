@@ -147,8 +147,6 @@ const FeatureDetail = ({ csvData }: { csvData: any }) => {
 
   const supportStatus = supportStatuses[supportMessageKey];
 
-  console.log({csvData, parsedCSVData})
-
   return (
     <Box
       sx={{
@@ -271,12 +269,6 @@ const FeatureDetail = ({ csvData }: { csvData: any }) => {
                   }}
                 >
                   <CompatibilityTable data={parsedCSVData} />
-                  {/* <pre>
-                    {csvData}
-                  </pre>
-                  <pre>
-                    {JSON.stringify(selectedFeatureCompatibilityData, null, 2)}
-                  </pre> */}
                 </Box>
               </>
             ) : (
@@ -332,6 +324,12 @@ const FeatureDetail = ({ csvData }: { csvData: any }) => {
       ) : (
         <p>Nothing selected</p>
       )}
+      <pre>
+        {csvData}
+      </pre>
+      <pre>
+        {JSON.stringify(selectedFeatureCompatibilityData, null, 2)}
+      </pre>
     </Box>
   );
 }

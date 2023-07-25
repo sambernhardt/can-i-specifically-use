@@ -1,4 +1,6 @@
 import { coerce, gte, valid } from "semver";
+import { BrowserKeys, CompatibilityDataType } from "./types";
+import { isArray } from "lodash";
 
 function isObject(obj: any) {
   return (
@@ -64,7 +66,7 @@ export function makeGenericMdnDocsUrl(url: string) {
   return url.replace('/en-us/', '/');
 }
 
-export function parseCSV(csv: string) {
+export function parseCSV(csv: string): Record<string, string>[] {
   const rows = csv.split('\n');
   const headers = rows[0].split(',');
   const result: Record<string, string>[] = [];
@@ -79,9 +81,30 @@ export function parseCSV(csv: string) {
   return result;
 }
 
-export function isCompatible(compatData: any, browserKey: string, version: string) {
+export function isCompatible(
+  compatData: CompatibilityDataType,
+  browserKey: BrowserKeys,
+  version: string
+): boolean | null {
   try {
-    const { version_added: minimumCompatibleVersion } = compatData[browserKey];
+    const compatibilityDataForBrowser = compatData[browserKey];
+    let minimumCompatibleVersion = null;
+
+    // TODO: Handle notes and flags
+    if (isArray(compatibilityDataForBrowser)) {
+      compatibilityDataForBrowser.forEach((compatibilityData) => {
+        if (compatibilityData.version_added) {
+          minimumCompatibleVersion = compatibilityData.version_added;
+        }
+      });
+    } else {
+      if (compatibilityDataForBrowser.version_added === false) {
+        return false;
+      }
+
+      minimumCompatibleVersion = compatibilityDataForBrowser.version_added;
+    }
+
     if (version === null || minimumCompatibleVersion === null) {
       console.error('Missing version or minimum compatible version');
       return false;
@@ -97,6 +120,6 @@ export function isCompatible(compatData: any, browserKey: string, version: strin
     }
   } catch (e) {
     console.error(e);
-    return false;
+    return null;
   }
 }

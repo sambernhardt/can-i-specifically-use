@@ -1,14 +1,11 @@
 import { useMemo } from 'react'
 import { isCompatible, parseCSV } from '../utils';
 import { SupportStatusKey } from '../components/FeatureDetail';
+import { BrowserKeys, DecoratedUsageDataType, RawUsageDataType } from '../types';
 
-const getBrowserKey = (browser: string, device: string) => {
-  const compatibilityKeys: {
-    [key: string]: {
-      browser: string[],
-      device: string[],
-    }
-  } = {
+const getBrowserKey = (browser: string, device: string): BrowserKeys => {
+  // TODO: Handle typing with Deno, Node.js
+  const compatibilityKeys: any = {
     "chrome": {
       browser: ["Chrome"],
       device: ["desktop"],
@@ -63,28 +60,23 @@ const getBrowserKey = (browser: string, device: string) => {
     },
   };
 
-  const browserKey = Object.keys(compatibilityKeys).find((key) => {
+  const browserKey = (Object.keys(compatibilityKeys) as BrowserKeys[]).find((key) => {
     const { browser: browserNames, device: deviceNames } = compatibilityKeys[key];
     return browserNames.includes(browser) && deviceNames.includes(device);
-  });
+  }) as BrowserKeys | undefined;
+
+  if (!browserKey) {
+    throw new Error(`Could not find browser key for ${browser} on ${device}`);
+  }
 
   return browserKey;
 }
-
-type DataType = Record<string, {
-  'Browser': string,
-  'Device Category': string,
-  'Browser Version': string,
-  'Users': string,
-  'Browser key': string,
-  'Compatible': boolean,
-}>[]
 
 type CanIUseDataType = (
   csvData: string,
   selectedFeatureCompatibilityData: any,
 ) => {
-  parsedCSVData: DataType,
+  parsedCSVData: DecoratedUsageDataType[],
   percentageSupported: number,
   percentageNotSupported: number,
   numberSupported: number,
@@ -94,28 +86,27 @@ type CanIUseDataType = (
 
 const useCanIUseData: CanIUseDataType = (csvData, selectedFeatureCompatibilityData) => {
   const result = useMemo(() => {
-    const parsed = parseCSV(csvData);
-    const csvDataWithBrowserKeys = parsed.map((row) => {
+    const parsed = parseCSV(csvData) as RawUsageDataType[];
+    const decoratedUsageData = parsed.map((row) => {
       const browserKey = getBrowserKey(row['Browser'], row['Device Category']);
       return {
         ...row,
-        'Browser key': browserKey,
+        'Browser Key': browserKey,
       }
-    });
-    const withCompatible: any = csvDataWithBrowserKeys.map((row: any) => {
-      const result = isCompatible(selectedFeatureCompatibilityData, row['Browser key'], row['Browser Version']);
+    }).map((row) => {
+      const result = isCompatible(selectedFeatureCompatibilityData, row['Browser Key'], row['Browser Version']);
       return {
         ...row,
         Compatible: result,
       }
-    });
+    }) as DecoratedUsageDataType[];
 
-    const _numberSupported = withCompatible
-      .filter((row: any) => row.Compatible)
-      .reduce((acc: any, row: any) => acc + parseInt(row.Users), 0);
-    const _numberNotSupported = withCompatible
-      .filter((row: any) => !row.Compatible)
-      .reduce((acc: any, row: any) => acc + parseInt(row.Users), 0);
+    const _numberSupported = decoratedUsageData
+      .filter((row) => row.Compatible)
+      .reduce((acc, row) => acc + parseInt(row.Users), 0);
+    const _numberNotSupported = decoratedUsageData
+      .filter((row) => !row.Compatible)
+      .reduce((acc, row) => acc + parseInt(row.Users), 0);
 
     const total = _numberSupported + _numberNotSupported;
     const _percentageSupported = Math.round((_numberSupported / total) * 100);
@@ -130,7 +121,7 @@ const useCanIUseData: CanIUseDataType = (csvData, selectedFeatureCompatibilityDa
     }
 
     return {
-      parsedCSVData: withCompatible,
+      parsedCSVData: decoratedUsageData,
       percentageSupported: _percentageSupported,
       percentageNotSupported: _percentageNotSupported,
       numberSupported: _numberSupported,
