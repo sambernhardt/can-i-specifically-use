@@ -1,15 +1,35 @@
 import { forwardRef } from 'react'
-import { Box, Button, Flex, Input, Link, Text } from 'theme-ui';
+import { Box, Button, Flex, Input, Text } from 'theme-ui';
 import Fieldset from '../Fieldset';
 import Icon from '../Icon';
 import { Cancel, CloudUpload } from 'iconoir-react';
 import { CSVDataType } from '../../App';
 import moment from 'moment';
+import greatBrowserSupport from '../../exampleUsageData/greatBrowserSupport.csv?raw';
+import moderateBrowserSupport from '../../exampleUsageData/greatBrowserSupport.csv?raw';
+import poorBrowserSupport from '../../exampleUsageData/poorBrowserSupport.csv?raw';
+
+const presets = [
+  {
+    id: 'great-browser-support',
+    label: 'Great browser support',
+    data: greatBrowserSupport,
+  },
+  {
+    id: 'moderate-browser-support',
+    label: 'Moderate browser support',
+    data: moderateBrowserSupport,
+  },
+  {
+    id: 'poor-browser-support',
+    label: 'Poor browser support',
+    data: poorBrowserSupport,
+  },
+]
 
 interface UsageDataInputProps {
   csvData?: CSVDataType | null,
-  setCSVData?: any,
-  handleFileUpload?: any,
+  setCsvData?: any,
 }
 
 const ICON_WIDTH = 20;
@@ -27,9 +47,43 @@ function formatUploadedDate(uploadedDate: string) {
 
 const UsageDataInput = forwardRef<any, UsageDataInputProps>(({
   csvData,
-  setCSVData,
-  handleFileUpload,
+  setCsvData,
 }, ref) => {
+  function createCSVData(data: string, name: string) {
+    return {
+      data,
+      name,
+      uploadedAt: new Date().toISOString(),
+    }
+  }
+
+  function handleFileUpload(e: any) {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      const csvData = e.target?.result;
+      if (typeof csvData === 'string') {
+        const _csvData = createCSVData(csvData,  file.name);
+        setCsvData(_csvData);
+      }
+    }
+
+    reader.readAsText(file);
+  }
+
+  function handleUsePreset(e: any) {
+    const presetId = e.target.value;
+    const preset = presets.find(preset => preset.id === presetId);
+
+    if (preset) {
+      const _csvData = createCSVData(preset.data, preset.label);
+      setCsvData(_csvData);
+    } else {
+      throw new Error(`No preset found with id ${presetId}`);
+    }
+  }
+
 
   return (
     <Fieldset
@@ -80,9 +134,7 @@ const UsageDataInput = forwardRef<any, UsageDataInputProps>(({
           >
             <Button
               variant="ghost"
-              onClick={() => {
-                setCSVData(null);
-              }}
+              onClick={() => setCsvData(null)}
               sx={{
                 display: 'inline-flex',
                 p: 2,
@@ -142,10 +194,10 @@ const UsageDataInput = forwardRef<any, UsageDataInputProps>(({
                 fontSize: 0,
               }}
             >
-              Upload CSV
+              Upload CSV of your usage data
             </Text>
           </Flex>
-          <Link
+          {/* <Link
             sx={{
               display: 'inline-block',
               mt: 3,
@@ -154,7 +206,29 @@ const UsageDataInput = forwardRef<any, UsageDataInputProps>(({
             }}
           >
             Download template
-          </Link>
+          </Link> */}
+          <Box
+            as="select"
+            onChange={handleUsePreset}
+            sx={{
+              display: 'inline-block',
+              mt: 3,
+              bg: 'transparent',
+              p: 0,
+              border: 'none',
+              fontFamily: 'body',
+              color: 'textLink',
+
+              '&:focus': {
+                outline: 'none',
+              },
+            }}
+          >
+            <option value="" disabled selected>Use a preset</option>
+            {presets.map(preset => (
+              <option value={preset.id}>{preset.label}</option>
+            ))}
+          </Box>
         </>
       )}
     </Fieldset>

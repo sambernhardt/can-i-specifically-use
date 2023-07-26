@@ -21,24 +21,6 @@ const App = () => {
     uploadedAt: new Date().toISOString(),
   });
 
-  function handleFileUpload(e: any) {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-
-    reader.onload = (e) => {
-      const csvData = e.target?.result;
-      if (typeof csvData === 'string') {
-        setCSVData({
-          data: csvData,
-          name: file.name,
-          uploadedAt: new Date().toISOString(),
-        });
-      }
-    }
-
-    reader.readAsText(file);
-  }
-
   return (
     <Box
       sx={{
@@ -96,7 +78,10 @@ const App = () => {
           }}
         >
           <FeatureInputSearch />
-          <UsageDataInput csvData={csvData} setCSVData={setCSVData} handleFileUpload={handleFileUpload} />
+          <UsageDataInput
+            csvData={csvData}
+            setCsvData={setCSVData}
+          />
         </Flex>
         <Box
           sx={{
