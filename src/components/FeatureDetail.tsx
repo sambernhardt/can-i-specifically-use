@@ -191,7 +191,7 @@ const FeatureDetail = ({ csvData }: { csvData: any }) => {
               </Flex>
               <Flex
                 sx={{
-                  alignItems: 'center',
+                  alignItems: 'center', 
                   justifyContent: 'space-between',
                   width: '100%',
                   flexWrap: 'wrap',
@@ -205,6 +205,7 @@ const FeatureDetail = ({ csvData }: { csvData: any }) => {
                       calculateFontSizeMobile(selectedFeature.name.length),
                       calculateFontSize(selectedFeature.name.length),
                     ],
+                    wordBreak: 'break-word',
                   }}
                 >
                   {selectedFeature.name}
@@ -213,9 +214,9 @@ const FeatureDetail = ({ csvData }: { csvData: any }) => {
                   href={selectedFeature.mdn_url}
                   target="_blank"
                   sx={{
-                    display: 'inline-flex',
-                    textDecoration: 'none',
+                    display: selectedFeature.mdn_url ? 'inline-flex' : 'none',
                     alignItems: 'center',
+                    textDecoration: 'none',
                     gap: 2,
                     fontFamily: 'body',
                     cursor: 'pointer',
@@ -236,7 +237,7 @@ const FeatureDetail = ({ csvData }: { csvData: any }) => {
                   View on MDN
                   <Icon icon={LinkIcon} sx={{ fontSize: 0 }} />
                 </Link>
-              </Flex>
+              </Flex> 
             </Flex>
             {error && (
               <Message
@@ -266,13 +267,13 @@ const FeatureDetail = ({ csvData }: { csvData: any }) => {
                     label="Supported"
                     stat={`${percentageSupported}%`}
                     icon={CheckCircle}
-                    subtext={`${numberSupported} users`}
+                    subtext={`${numberSupported.toLocaleString()} users`}
                   />
                   <SupportCard
                     label="Not supported"
                     stat={`${percentageNotSupported}%`}
                     icon={WarningCircle}
-                    subtext={`${numberNotSupported} users`}
+                    subtext={`${numberNotSupported.toLocaleString()} users`}
                   />
                 </Flex>
                 <Box

@@ -30,7 +30,7 @@ export const theme: Theme = {
     backgroundDangerAlpha: 'rgba(161,47,47,0.1)',
     backgroundSuccessAlpha: 'rgba(70, 255, 57, 0.221)',
     backgroundWarningAlpha: 'rgba(200, 127, 39, 0.131)',
-    backgroundFocusAlpha: 'rgba(9, 92, 255, 0.2)',
+    backgroundFocusAlpha: 'rgba(9, 92, 255, 0.1)',
 
     borderNeutralPrimary: '#dedede',
     borderNeutralSecondary: '#eaeaea',
@@ -54,7 +54,7 @@ export const theme: Theme = {
         backgroundDangerAlpha: 'rgba(161,47,47,0.1)',
         backgroundSuccessAlpha: 'rgba(69, 255, 57, 0.06)',
         backgroundWarningAlpha: 'rgba(111,61,0,0.25)',
-        backgroundFocusAlpha: 'rgba(9, 92, 255, 0.2)',
+        backgroundFocusAlpha: 'rgba(9, 92, 255, 0.1)',
 
         borderNeutralPrimary: '#2B2B2B',
         borderNeutralSecondary: '#242424',

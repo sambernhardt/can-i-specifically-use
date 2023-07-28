@@ -52,6 +52,7 @@ const UsageDataInput = forwardRef<any, UsageDataInputProps>(({
   csvData,
   setCsvData,
 }, ref) => {
+  const [presetValue, setPresetValue] = useState('' as string | undefined);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const [error, setError] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(false);
@@ -86,6 +87,7 @@ const UsageDataInput = forwardRef<any, UsageDataInputProps>(({
   function handleFileUpload(e: any) {
     setLoading(true);
     setIsDraggingOver(false);
+
     const file = e.target.files[0];
     const reader = new FileReader();
 
@@ -121,7 +123,9 @@ const UsageDataInput = forwardRef<any, UsageDataInputProps>(({
     if (preset) {
       const _csvData = createCSVData(preset.data, preset.label);
       setValueAndClearState(_csvData);
+      setPresetValue('');
     } else {
+      setPresetValue('');
       throw new Error(`No preset found with id ${presetId}`);
     }
   }
@@ -133,7 +137,7 @@ const UsageDataInput = forwardRef<any, UsageDataInputProps>(({
       labelAction={(
         <Select
           onChange={handleUsePreset}
-          defaultValue=""
+          value={presetValue}
           sx={{
             display: 'inline-block',
             bg: 'transparent',
@@ -159,12 +163,11 @@ const UsageDataInput = forwardRef<any, UsageDataInputProps>(({
         </Select>
       )}
     >
-      {(!csvData || isDraggingOver) ? (
+      {(!csvData || isDraggingOver || loading) ? (
         <>
           <Flex
             onDragLeave={() => setIsDraggingOver(false)}
             onDragOver={() => setIsDraggingOver(true)}
-            onDrop={() => setIsDraggingOver(false)}
             sx={{
               position: 'relative',
               flexDirection: 'column',
@@ -176,7 +179,6 @@ const UsageDataInput = forwardRef<any, UsageDataInputProps>(({
               border: '1px dashed',
               bg: 'transparent',
               borderColor: 'borderNeutralPrimary',
-              boxShadow: 'default',
               transition: 'all 0.2s ease-in-out',
 
               ...(error && {
@@ -257,7 +259,6 @@ const UsageDataInput = forwardRef<any, UsageDataInputProps>(({
               borderRadius: '12px',
               border: '1px solid',
               borderColor: 'borderNeutralPrimary',
-              boxShadow: 'default',
               fontFamily: 'body',
             }}
           >
