@@ -1,4 +1,6 @@
+import { HalfMoon, SunLight } from 'iconoir-react';
 import { Button, useColorMode } from 'theme-ui'
+import Icon from './Icon';
 
 const ThemeSwitcher = () => {
   const [mode, setMode] = useColorMode()
@@ -19,12 +21,17 @@ const ThemeSwitcher = () => {
 
       }}
       sx={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '44px',
+        width: '44px',
         borderRadius: '8px',
-        height: '40px',
         fontSize: 1,
+        p: 2,
       }}
     >
-      {mode === 'dark' ? '☀️' : '🌙'}
+      <Icon icon={mode === 'dark' ? HalfMoon : SunLight} />
     </Button>
   )
 }

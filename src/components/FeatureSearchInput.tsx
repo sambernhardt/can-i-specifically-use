@@ -39,150 +39,149 @@ const FeatureInputSearch = () => {
   const showClearButton = search.length > 0;
 
   return (
-    <>
-      <Box
-        sx={{
-          position: 'relative',
+    <Box
+      sx={{
+        position: 'relative',
+        flex: 1,
+      }}
+    >
+      <TextInput
+        ref={inputRef}
+        type="text"
+        autoFocus
+        placeholder="Search MDN"
+        value={search}
+        onChange={e => {
+          if (e.target.value.length === 0) {
+            setSearch('');
+            setShowResults(false);
+          } else {
+            setSearch(e.target.value);
+            setShowResults(true);
+          }
         }}
-      >
-        <TextInput
-          ref={inputRef}
-          type="text"
-          autoFocus
-          placeholder="Search MDN"
-          value={search}
-          onChange={e => {
-            if (e.target.value.length === 0) {
-              setSearch('');
-              setShowResults(false);
-            } else {
-              setSearch(e.target.value);
-              setShowResults(true);
-            }
-          }}
-          leadingAdornment={(
-            <Flex
-              sx={{
-                position: 'absolute',
-                pointerEvents: 'none',
-                top: 0,
-                left: 3,
-                height: '100%',
-                alignItems: 'center',
-                justifyContent: 'center',
-
-                svg: {
-                  height: '20px',
-                }
-              }}
-            >
-              <Icon icon={Search} />
-            </Flex>
-          )}
-          trailingAdornment={showClearButton && (
-            <Flex
-              sx={{
-                height: '100%',
-                position: 'absolute',
-                p: 2,
-                top: 0,
-                right: 0,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <Button
-                variant="ghost"
-                onClick={() => {
-                  setSearch('');
-                  inputRef.current?.focus();
-                }}
-                sx={{
-                  display: 'inline-flex',
-                  p: 2,
-                  borderRadius: '8px',
-                }}
-              >
-                <Icon icon={Cancel} />
-              </Button>
-            </Flex>
-          )}
-        />
-        {shouldShowResults && (
-          <Box
+        leadingAdornment={(
+          <Flex
             sx={{
               position: 'absolute',
-              top: 'calc(100% + 8px)',
-              left: 0,
-              width: '100%',
-              bg: 'backgroundSurface',
-              zIndex: 1,
-              maxHeight: '300px',
-              overflow: 'scroll',
-              borderRadius: '16px',
-              boxShadow: 'default',
+              pointerEvents: 'none',
+              top: 0,
+              left: 3,
+              height: '100%',
+              alignItems: 'center',
+              justifyContent: 'center',
+
+              svg: {
+                height: '20px',
+              }
             }}
           >
-            {results.length > 0 ? results.map((result: any) => (
-              <div key={result.path}>
-                <Button
-                  onClick={() => {
-                    setShowResults(false);
-                    setSearch('');
+            <Icon icon={Search} />
+          </Flex>
+        )}
+        trailingAdornment={showClearButton && (
+          <Flex
+            sx={{
+              height: '100%',
+              position: 'absolute',
+              p: 2,
+              top: 0,
+              right: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setSearch('');
+                inputRef.current?.focus();
+              }}
+              sx={{
+                display: 'inline-flex',
+                p: 2,
+                borderRadius: '8px',
+              }}
+            >
+              <Icon icon={Cancel} />
+            </Button>
+          </Flex>
+        )}
+      />
+      {shouldShowResults && (
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 'calc(100% + 8px)',
+            left: 0,
+            width: '100%',
+            bg: 'backgroundSurface',
+            zIndex: 1,
+            maxHeight: '300px',
+            overflow: 'scroll',
+            borderRadius: '16px',
+            boxShadow: 'default',
+          }}
+        >
+          {results.length > 0 ? results.map((result: any) => (
+            <div key={result.path}>
+              <Button
+                onClick={() => {
+                  setShowResults(false);
+                  setSearch('');
 
-                    navigate(`/feature/${result.path.replace(/\./g, '+')}`);
-                  }}
-                  variant="ghost"
-                  sx={{
-                    color: 'textNeutralPrimary',
-                    display: 'flex',
-                    alignItems: 'baseline',
-                    py: '15px',
-                    width: '100%',
-                    textAlign: 'left',
-                    background: 'transparent',
-                    gap: 1,
-                    borderRadius: 0,
-                    border: 'none',
-                    borderBottom: '1px solid',
-                    borderBottomColor: 'borderNeutralSecondary',
-                  }}
-                >
-                  <CategoryBadge category={result.category} size="sm" />
-                  {result.parentPath && (
-                    <Text
-                      sx={{
-                        color: 'textNeutralSecondary',
-                      }}
-                    >
-                      {result.parentPath}
-                    </Text>
-                  )}
-                  {result.name}
-                </Button>
-              </div>
-            )) : (
-              <Flex
+                  navigate(`/feature/${result.path.replace(/\./g, '+')}`);
+                }}
+                variant="ghost"
                 sx={{
-                  p: 4,
-                  alignItems: 'center',
-                  justifyContent: 'center',
+                  color: 'textNeutralPrimary',
+                  display: 'flex',
+                  alignItems: 'baseline',
+                  py: '15px',
+                  width: '100%',
+                  textAlign: 'left',
+                  background: 'transparent',
+                  gap: 1,
+                  borderRadius: 0,
+                  border: 'none',
+                  borderBottom: '1px solid',
+                  borderBottomColor: 'borderNeutralSecondary',
                 }}
               >
-                <Text
-                  sx={{
-                    color: 'textNeutralSecondary',
-                  }}
-                >
-                  No results
-                </Text>
-              </Flex>
-            )}
-          </Box>
-        )}
-      </Box>
-    </>
+                <CategoryBadge category={result.category} size="sm" />
+                {result.parentPath && (
+                  <Text
+                    sx={{
+                      color: 'textNeutralSecondary',
+                    }}
+                  >
+                    {result.parentPath}
+                  </Text>
+                )}
+                {result.name}
+              </Button>
+            </div>
+          )) : (
+            <Flex
+              sx={{
+                p: 4,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Text
+                sx={{
+                  color: 'textNeutralSecondary',
+                }}
+              >
+                No results
+              </Text>
+            </Flex>
+          )}
+        </Box>
+      )}
+    </Box>
   )
 };
 

@@ -7,6 +7,7 @@ import usePersistedState from "./hooks/usePersistedState";
 import UsageDataInput from "./components/input/UsageDataInput";
 import { CSVDataType } from "./types";
 import { validateAndParseCSVString } from "./utils";
+import LeftColumn from "./components/LeftColumn";
 
 const HEADER_HEIGHT = '80px';
 
@@ -18,7 +19,7 @@ const defaultCSVData = {
 };
 
 const App = () => {
-  const [csvData, setCSVData] = usePersistedState<CSVDataType | null>('csvData', defaultCSVData);
+  const [csvData, setCsvData] = usePersistedState<CSVDataType | null>('csvData', defaultCSVData);
 
   return (
     <Box
@@ -44,7 +45,8 @@ const App = () => {
           sx={{
             color: 'textNeutralPrimary',
             textDecoration: 'none',
-            lineHeight: '1em'
+            lineHeight: '1em',
+            mt: '7px'
           }}
         >
           <Heading
@@ -57,36 +59,34 @@ const App = () => {
             sx={{
               display: 'block',
               color: 'textNeutralSecondary',
-              fontSize: 1,
-              mt: 1,
+              fontSize: 0,
+              mt: 2,
             }}
-          >Check browser compatibility for your actual usage data</Text>
+          >
+            Browser compatibility for your actual usage data</Text>
         </Link>
         <ThemeSwitcher />
       </Flex>
       <Flex
         sx={{
           flexDirection: ['column', 'column', 'row'],
-          minHeight: `calc(100vh - ${HEADER_HEIGHT})`,
+          height: `calc(100vh - ${HEADER_HEIGHT})`,
           p: [4, 5],
           gap: [4, 5],
         }}
       >
-        <Flex
+        <Box
           sx={{
-            flexDirection: 'column',
-            gap: [4, 5],
             maxWidth: ['100%', '100%', '400px'],
             minWidth: ['100%', '300px'],
-            flex: 1,
+            flexShrink: 1,
           }}
         >
-          <FeatureInputSearch />
-          <UsageDataInput
+          <LeftColumn
             csvData={csvData}
-            setCsvData={setCSVData}
-          />
-        </Flex>
+            setCsvData={setCsvData}
+          />  
+        </Box>
         <Box
           sx={{
             width: '1px',
@@ -103,7 +103,8 @@ const App = () => {
         />
         <Box
           sx={{
-            flex: 3,
+            flex: [1, 3],
+            overflow: 'scroll',
           }}
         >
           <FeatureDetail csvData={csvData ? csvData.rawData : ''} />

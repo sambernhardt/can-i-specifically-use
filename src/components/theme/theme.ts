@@ -71,6 +71,7 @@ export const theme: Theme = {
   fontSizes: [
     13, 15, 17, 20, 24, 32, 48, 56
   ],
+  breakpoints: [40, 52, 64].map((n) => n + 'em'),
   buttons: {
     primary: {
       ...buttonStyles,
