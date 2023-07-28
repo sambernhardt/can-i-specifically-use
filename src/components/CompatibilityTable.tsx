@@ -47,7 +47,7 @@ const CompatibilityTable = ({ data }: { data: DecoratedUsageDataType[] }) => {
     },
     {
       header: 'Users',
-      cell: d => d['Users'],
+      cell: d => d['Users'].toLocaleString(),
     },
     {
       header: 'Compatible',
