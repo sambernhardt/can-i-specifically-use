@@ -59,7 +59,7 @@ export const validBrowserKeys = [
 export type BrowserKeys = typeof validBrowserKeys[number];
 
 type SimpleCompatibilityDataType = {
-  version_added: string | false;
+  version_added: boolean | string;
 }
 
 type CompatibilityNotes = {

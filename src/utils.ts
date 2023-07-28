@@ -116,8 +116,8 @@ export function isCompatible(
         }
       });
     } else {
-      if (compatibilityDataForBrowser.version_added === false) {
-        return false;
+      if (typeof compatibilityDataForBrowser.version_added === 'boolean') {
+        return compatibilityDataForBrowser.version_added;
       }
 
       minimumCompatibleVersion = compatibilityDataForBrowser.version_added;
