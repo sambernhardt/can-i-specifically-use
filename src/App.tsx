@@ -5,21 +5,20 @@ import ThemeSwitcher from "./components/ThemeSwitcher";
 import exampleData from './exampleData.csv?raw';
 import usePersistedState from "./hooks/usePersistedState";
 import UsageDataInput from "./components/input/UsageDataInput";
+import { CSVDataType } from "./types";
+import { validateAndParseCSVString } from "./utils";
 
 const HEADER_HEIGHT = '80px';
 
-export type CSVDataType = {
-  name: string;
-  data: string;
-  uploadedAt: string;
-}
+const defaultCSVData = {
+  name: 'exampleData.csv',
+  uploadedAt: new Date().toISOString(),
+  rawData: exampleData,
+  parsedData: validateAndParseCSVString(exampleData),
+};
 
 const App = () => {
-  const [csvData, setCSVData] = usePersistedState<CSVDataType | null>('csvData', {
-    data: exampleData,
-    name: 'exampleData.csv',
-    uploadedAt: new Date().toISOString(),
-  });
+  const [csvData, setCSVData] = usePersistedState<CSVDataType | null>('csvData', defaultCSVData);
 
   return (
     <Box
@@ -102,7 +101,7 @@ const App = () => {
             flex: 3,
           }}
         >
-          <FeatureDetail csvData={csvData ? csvData.data : ''} />
+          <FeatureDetail csvData={csvData ? csvData.rawData : ''} />
         </Box>
       </Flex>
     </Box>

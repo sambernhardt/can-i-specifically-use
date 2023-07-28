@@ -1,11 +1,16 @@
-import { useMemo } from 'react'
-import { isCompatible, parseCSV } from '../utils';
+import { useMemo, useState } from 'react'
+import { isCompatible, parseCSV, validateAndParseCSVString } from '../utils';
 import { SupportStatusKey } from '../components/FeatureDetail';
-import { BrowserKeys, DecoratedUsageDataType, RawUsageDataType } from '../types';
+import { BrowserKeys, DecoratedUsageDataType, DeviceCategory, RawDataBrowsersType, ParsedUsageDataType } from '../types';
 
-const getBrowserKey = (browser: string, device: string): BrowserKeys => {
+type CompatibilityKeysLookupObject = Record<BrowserKeys | string, {
+  browser: RawDataBrowsersType[],
+  device: DeviceCategory[],
+}>;
+
+const getBrowserKey = (rawBrowser: RawDataBrowsersType, device: DeviceCategory): BrowserKeys => {
   // TODO: Handle typing with Deno, Node.js
-  const compatibilityKeys: any = {
+  const compatibilityKeys: CompatibilityKeysLookupObject = {
     "chrome": {
       browser: ["Chrome"],
       device: ["desktop"],
@@ -60,13 +65,14 @@ const getBrowserKey = (browser: string, device: string): BrowserKeys => {
     },
   };
 
+  // Look up the browser key based on the raw browser name and device category
   const browserKey = (Object.keys(compatibilityKeys) as BrowserKeys[]).find((key) => {
     const { browser: browserNames, device: deviceNames } = compatibilityKeys[key];
-    return browserNames.includes(browser) && deviceNames.includes(device);
+    return browserNames.includes(rawBrowser) && deviceNames.includes(device);
   }) as BrowserKeys | undefined;
 
   if (!browserKey) {
-    throw new Error(`Could not find browser key for ${browser} on ${device}`);
+    throw new Error(`Could not find browser key for ${rawBrowser} on ${device}`);
   }
 
   return browserKey;
@@ -82,51 +88,67 @@ type CanIUseDataType = (
   numberSupported: number,
   numberNotSupported: number,
   supportMessageKey: string,
+  error: string | null,
 }
 
 const useCanIUseData: CanIUseDataType = (csvData, selectedFeatureCompatibilityData) => {
   const result = useMemo(() => {
-    const parsed = parseCSV(csvData) as RawUsageDataType[];
-    const decoratedUsageData = parsed.map((row) => {
-      const browserKey = getBrowserKey(row['Browser'], row['Device Category']);
-      return {
-        ...row,
-        'Browser Key': browserKey,
+    try {
+      console.log('csvData', csvData)
+      const parsedAndValidated = validateAndParseCSVString(csvData);
+      console.log('parsedAndValidated', parsedAndValidated)
+      const decoratedUsageData = parsedAndValidated.map((row) => {
+        const browserKey = getBrowserKey(row['Browser'], row['Device Category']);
+        return {
+          ...row,
+          'Browser Key': browserKey,
+        }
+      }).map((row) => {
+        const result = isCompatible(selectedFeatureCompatibilityData, row['Browser Key'], row['Browser Version']);
+        return {
+          ...row,
+          Compatible: result,
+        }
+      }) as DecoratedUsageDataType[];
+  
+      const _numberSupported = decoratedUsageData
+        .filter((row) => row.Compatible)
+        .reduce((acc, row) => acc + parseInt(row.Users), 0);
+      const _numberNotSupported = decoratedUsageData
+        .filter((row) => !row.Compatible)
+        .reduce((acc, row) => acc + parseInt(row.Users), 0);
+  
+      const total = _numberSupported + _numberNotSupported;
+      const _percentageSupported = Math.round((_numberSupported / total) * 100);
+      const _percentageNotSupported = Math.round((_numberNotSupported / total) * 100);
+  
+      let _supportMessageKey: SupportStatusKey = 'notWellSupported';
+      if (_numberSupported / total >= 0.5) {
+        _supportMessageKey = 'moderatelySupported';
       }
-    }).map((row) => {
-      const result = isCompatible(selectedFeatureCompatibilityData, row['Browser Key'], row['Browser Version']);
-      return {
-        ...row,
-        Compatible: result,
+      if (_numberSupported / total >= 0.9) {
+        _supportMessageKey = 'veryWellSupported';
       }
-    }) as DecoratedUsageDataType[];
-
-    const _numberSupported = decoratedUsageData
-      .filter((row) => row.Compatible)
-      .reduce((acc, row) => acc + parseInt(row.Users), 0);
-    const _numberNotSupported = decoratedUsageData
-      .filter((row) => !row.Compatible)
-      .reduce((acc, row) => acc + parseInt(row.Users), 0);
-
-    const total = _numberSupported + _numberNotSupported;
-    const _percentageSupported = Math.round((_numberSupported / total) * 100);
-    const _percentageNotSupported = Math.round((_numberNotSupported / total) * 100);
-
-    let _supportMessageKey: SupportStatusKey = 'notWellSupported';
-    if (_numberSupported / total >= 0.5) {
-      _supportMessageKey = 'moderatelySupported';
-    }
-    if (_numberSupported / total >= 0.9) {
-      _supportMessageKey = 'veryWellSupported';
-    }
-
-    return {
-      parsedCSVData: decoratedUsageData,
-      percentageSupported: _percentageSupported,
-      percentageNotSupported: _percentageNotSupported,
-      numberSupported: _numberSupported,
-      numberNotSupported: _numberNotSupported,
-      supportMessageKey: _supportMessageKey,
+  
+      return {
+        parsedCSVData: decoratedUsageData,
+        percentageSupported: _percentageSupported,
+        percentageNotSupported: _percentageNotSupported,
+        numberSupported: _numberSupported,
+        numberNotSupported: _numberNotSupported,
+        supportMessageKey: _supportMessageKey,
+        error: null,
+      }
+    } catch (e) {
+      return {
+        parsedCSVData: [],
+        percentageSupported: 0,
+        percentageNotSupported: 0,
+        numberSupported: 0,
+        numberNotSupported: 0,
+        supportMessageKey: 'notWellSupported',
+        error: e instanceof Error ? "Couldn't parse CSV or process it or something: " + e.message : 'No error message',
+      }
     }
   }, [csvData, selectedFeatureCompatibilityData]);
 

@@ -142,8 +142,19 @@ const FeatureDetail = ({ csvData }: { csvData: any }) => {
     percentageNotSupported,
     numberSupported,
     numberNotSupported,
-    supportMessageKey
+    supportMessageKey,
+    error
   } = useCanIUseData(csvData, selectedFeatureCompatibilityData);
+
+  console.log({
+    parsedCSVData,
+    percentageSupported,
+    percentageNotSupported,
+    numberSupported,
+    numberNotSupported,
+    supportMessageKey,
+    error
+  })
 
   const supportStatus = supportStatuses[supportMessageKey];
 
@@ -237,6 +248,15 @@ const FeatureDetail = ({ csvData }: { csvData: any }) => {
                 </Link>
               </Flex>
             </Flex>
+            {error && (
+              <Message
+                heading="Error"
+                icon={WarningCircle}
+                palette="danger"
+              >
+                {error}
+              </Message> 
+            )}
             {csvData ? (
               <>  
                 <Message

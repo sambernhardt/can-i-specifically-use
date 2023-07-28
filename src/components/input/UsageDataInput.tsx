@@ -1,28 +1,29 @@
-import { forwardRef } from 'react'
-import { Box, Button, Flex, Input, Text } from 'theme-ui';
+import { forwardRef, useState } from 'react'
+import { Box, Button, Flex, Input, Select, Text } from 'theme-ui';
 import Fieldset from '../Fieldset';
 import Icon from '../Icon';
 import { Cancel, CloudUpload } from 'iconoir-react';
-import { CSVDataType } from '../../App';
+import { CSVDataType } from '../../types';
 import moment from 'moment';
 import greatBrowserSupport from '../../exampleUsageData/greatBrowserSupport.csv?raw';
 import moderateBrowserSupport from '../../exampleUsageData/greatBrowserSupport.csv?raw';
 import poorBrowserSupport from '../../exampleUsageData/poorBrowserSupport.csv?raw';
+import { validateAndParseCSVString } from '../../utils';
 
 const presets = [
   {
     id: 'great-browser-support',
-    label: 'Great browser support',
+    label: 'Great',
     data: greatBrowserSupport,
   },
   {
     id: 'moderate-browser-support',
-    label: 'Moderate browser support',
+    label: 'Moderate',
     data: moderateBrowserSupport,
   },
   {
     id: 'poor-browser-support',
-    label: 'Poor browser support',
+    label: 'Poor',
     data: poorBrowserSupport,
   },
 ]
@@ -49,11 +50,19 @@ const UsageDataInput = forwardRef<any, UsageDataInputProps>(({
   csvData,
   setCsvData,
 }, ref) => {
-  function createCSVData(data: string, name: string) {
-    return {
-      data,
-      name,
-      uploadedAt: new Date().toISOString(),
+  const [error, setError] = useState<string | undefined>(undefined);
+
+  function createCSVData(data: string, name: string): CSVDataType {
+    try {
+      const parsedData = validateAndParseCSVString(data);
+      return {
+        rawData: data,
+        parsedData,
+        name,
+        uploadedAt: new Date().toISOString(),
+      }
+    } catch (error) {
+      throw new Error("Couldn't parse CSV data");
     }
   }
 
@@ -64,8 +73,17 @@ const UsageDataInput = forwardRef<any, UsageDataInputProps>(({
     reader.onload = (e) => {
       const csvData = e.target?.result;
       if (typeof csvData === 'string') {
-        const _csvData = createCSVData(csvData,  file.name);
-        setCsvData(_csvData);
+        try {
+          const _csvData = createCSVData(csvData,  file.name);
+          setCsvData(_csvData);
+          setError(undefined);
+        } catch (error) {
+          if (error instanceof Error) {
+            setError(error.message);
+          } else {
+            setError('Something went wrong');
+          }
+        }
       }
     }
 
@@ -84,10 +102,38 @@ const UsageDataInput = forwardRef<any, UsageDataInputProps>(({
     }
   }
 
-
   return (
     <Fieldset
       label="Usage data"
+      error={error}
+      labelAction={(
+        <Select
+          onChange={handleUsePreset}
+          value=""
+          sx={{
+            display: 'inline-block',
+            bg: 'transparent',
+            p: 0,
+            border: 'none',
+            fontFamily: 'body',
+            color: 'textLink',
+            fontSize: 0,
+
+            '+ svg': {
+              display: 'none',
+            },
+
+            '&:focus': {
+              outline: 'none',
+            },
+          }}
+        >
+          <option value="" disabled selected>Use a preset</option>
+          {presets.map(preset => (
+            <option value={preset.id}>{preset.label}</option>
+          ))}
+        </Select>
+      )}
     >
       {csvData ? (
         <Box
@@ -157,7 +203,7 @@ const UsageDataInput = forwardRef<any, UsageDataInputProps>(({
               width: '100%',
               borderRadius: '12px',
               border: '1px dashed',
-              borderColor: 'borderNeutralPrimary',
+              borderColor: error ? 'red' : 'borderNeutralPrimary',
               boxShadow: 'default',
               transition: 'all 0.2s ease-in-out',
     
@@ -207,28 +253,6 @@ const UsageDataInput = forwardRef<any, UsageDataInputProps>(({
           >
             Download template
           </Link> */}
-          <Box
-            as="select"
-            onChange={handleUsePreset}
-            sx={{
-              display: 'inline-block',
-              mt: 3,
-              bg: 'transparent',
-              p: 0,
-              border: 'none',
-              fontFamily: 'body',
-              color: 'textLink',
-
-              '&:focus': {
-                outline: 'none',
-              },
-            }}
-          >
-            <option value="" disabled selected>Use a preset</option>
-            {presets.map(preset => (
-              <option value={preset.id}>{preset.label}</option>
-            ))}
-          </Box>
         </>
       )}
     </Fieldset>

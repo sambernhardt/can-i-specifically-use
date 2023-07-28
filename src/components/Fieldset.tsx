@@ -18,6 +18,7 @@ const Fieldset: FC<FieldsetProps> = ({
       <Flex
         sx={{
           justifyContent: 'space-between',
+          alignItems: 'center',
           mb: 2,
         }}
       >
@@ -33,7 +34,14 @@ const Fieldset: FC<FieldsetProps> = ({
       </Flex>
       {children}
       {error && (
-        <Text as="p" sx={{ color: 'error' }}>
+        <Text
+          as="p"
+          sx={{
+            color: 'red',
+            fontSize: 0,
+            mt: 2,
+          }}
+        >
           {error}
         </Text>
       )}

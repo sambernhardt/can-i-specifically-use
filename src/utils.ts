@@ -1,5 +1,5 @@
 import { coerce, gte, valid } from "semver";
-import { BrowserKeys, CompatibilityDataType } from "./types";
+import { BrowserKeys, CompatibilityDataType, ParsedUsageDataArray, ParsedUsageDataArrayType, ParsedUsageDataType } from "./types";
 import { isArray } from "lodash";
 
 function isObject(obj: any) {
@@ -67,19 +67,34 @@ export function makeGenericMdnDocsUrl(url: string) {
 }
 
 export function parseCSV(csv: string): Record<string, string>[] {
-  const rows = csv.split('\n');
-  const headers = rows[0].split(',');
-  const result: Record<string, string>[] = [];
-  rows.slice(1).forEach(row => {
-    const obj: any = {};
-    const rowData = row.split(',');
-    headers.forEach((header, i) => {
-      obj[header] = rowData[i];
+  try {
+    const rows = csv.split('\n');
+    const headers = rows[0].split(',');
+    const result: Record<string, string>[] = [];
+    rows.slice(1).forEach(row => {
+      const obj: any = {};
+      const rowData = row.split(',');
+      headers.forEach((header, i) => {
+        obj[header] = rowData[i];
+      });
+      result.push(obj);
     });
-    result.push(obj);
-  });
-  return result;
+    return result;
+  } catch (e) {
+    if (e instanceof Error) {
+      throw new Error('Could not parse CSV: ' + e.message);
+    } else {
+      throw new Error('Could not parse CSV');
+    }
+  }
 }
+
+export function validateAndParseCSVString(csv: string): ParsedUsageDataArrayType {
+  const parsedCsv = parseCSV(csv);
+  const validatedCsv = ParsedUsageDataArray.parse(parsedCsv);
+  return validatedCsv;
+}
+
 
 export function isCompatible(
   compatData: CompatibilityDataType,
