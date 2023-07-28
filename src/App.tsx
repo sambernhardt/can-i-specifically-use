@@ -77,6 +77,7 @@ const App = () => {
             flexDirection: 'column',
             gap: [4, 5],
             maxWidth: ['100%', '100%', '400px'],
+            minWidth: ['100%', '300px'],
             flex: 1,
           }}
         >

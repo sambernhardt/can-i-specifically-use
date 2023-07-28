@@ -8,15 +8,17 @@ interface Props extends BoxProps {
 
 const sizeLookup = {
   sm: {
-    borderRadius: '4px',
+    borderRadius: '12px',
     fontSize: 1,
-    p: 1,
+    py: 1,
+    px: 2,
     color: 'textNeutralSecondary',
   },
   md: {
-    borderRadius: '8px',
+    borderRadius: '20px',
     fontSize: 1,
     p: 2,
+    px: 3,
   }
 }
 

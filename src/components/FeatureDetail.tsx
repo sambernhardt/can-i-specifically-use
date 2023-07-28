@@ -159,7 +159,7 @@ const FeatureDetail = ({ csvData }: { csvData: any }) => {
                       color: 'textNeutralSecondary',
                     }}
                   >
-                    {selectedFeature.parentPath}&nbsp;
+                    {selectedFeature.parentPath.split('.').join('.')}&nbsp;
                   </Text>
                 )}
               </Flex>
@@ -188,6 +188,7 @@ const FeatureDetail = ({ csvData }: { csvData: any }) => {
                   href={selectedFeature.mdn_url}
                   target="_blank"
                   sx={{
+                    fontFamily: 'body',
                     display: selectedFeature.mdn_url ? 'inline-flex' : 'none',
                     alignItems: 'center',
                     textDecoration: 'none',
@@ -196,8 +197,7 @@ const FeatureDetail = ({ csvData }: { csvData: any }) => {
                     px: 3,
                     py: 2,
                     borderRadius: '8px',
-                    fontSize: 2,
-                    fontFamily: 'GeneralSans-Medium',
+                    fontSize: 1,
                     color: 'textNeutralPrimary',
                     bg: 'backgroundSurface',
                     border: '1px solid',

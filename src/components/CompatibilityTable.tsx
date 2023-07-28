@@ -2,7 +2,7 @@ import { Box, Button, Flex, Text } from 'theme-ui';
 import { DecoratedUsageDataType } from '../types';
 import { FC, Fragment } from 'react';
 import Icon from './Icon';
-import { ArrowDown, NavArrowDown } from 'iconoir-react';
+import { NavArrowDown } from 'iconoir-react';
 
 type Props = {
   data: DecoratedUsageDataType[],

@@ -34,20 +34,23 @@ const SupportCard: FC<Props> = ({
           sx={{
             justifyContent: 'space-between',
             alignItems: 'center',
+            mb: 2,
           }}
         >
           <Label sx={{ color: 'textNeutralSecondary' }}>{label}</Label>
         </Flex>
         <Text
           sx={{
+            fontFamily: 'heading',
             display: 'block',
             fontSize: [4, 6],
+            fontWeight: 600,
             mb: 3,
           }}
         >
           {stat}
           {units && (
-            <Text sx={{ color: 'textNeutralSecondary', ml: 1 }}>
+            <Text sx={{ color: 'textNeutralSecondary', ml: 1, fontWeight: '400', fontSize: 4 }}>
               {units}
             </Text> 
           )}
