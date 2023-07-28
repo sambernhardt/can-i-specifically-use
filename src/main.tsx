@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import Providers from './components/Providers.tsx'
 import { RouterProvider, createBrowserRouter, redirect } from 'react-router-dom'
 import App from './App.tsx'
-import './index.css';
+import './index.less';
 
 const router = createBrowserRouter([
   {

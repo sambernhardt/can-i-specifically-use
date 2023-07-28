@@ -81,6 +81,7 @@ const Message: FC<Props> = ({
           <Heading
             as="h3"
             sx={{
+              fontWeight: 500,
               color: textPrimary,
             }}
           >

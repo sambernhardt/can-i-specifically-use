@@ -1,5 +1,5 @@
 import { forwardRef, useState } from 'react'
-import { Box, Button, Flex, Input, Select, Text } from 'theme-ui';
+import { Box, Button, Flex, Input, Link, Select, Text } from 'theme-ui';
 import Fieldset from '../Fieldset';
 import Icon from '../Icon';
 import { Cancel, CloudUpload } from 'iconoir-react';
@@ -85,6 +85,7 @@ const UsageDataInput = forwardRef<any, UsageDataInputProps>(({
   }
 
   function handleFileUpload(e: any) {
+    console.time('Data ready');
     setLoading(true);
     setIsDraggingOver(false);
 
@@ -227,16 +228,29 @@ const UsageDataInput = forwardRef<any, UsageDataInputProps>(({
               {loading ? 'Loading...' : 'Upload CSV of your usage data'}
             </Text>
           </Flex>
-          {/* <Link
+          <Link
             sx={{
               display: 'inline-block',
               mt: 3,
               fontSize: 0,
               whiteSpace: 'nowrap',
             }}
+            onClick={() => {
+              const element = document.createElement('a');
+              const file = new Blob([greatBrowserSupport], {type: 'text/csv'});
+              element.href = URL.createObjectURL(file);
+              element.download = 'great-browser-support.csv';
+              document.body.appendChild(element);
+              element.click();
+
+              setTimeout(() => {
+                document.body.removeChild(element);
+                URL.revokeObjectURL(element.href);
+              }, 100);
+            }}
           >
             Download template
-          </Link> */}
+          </Link>
         </>
       ) : (
         <Box

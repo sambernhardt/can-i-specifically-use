@@ -47,7 +47,12 @@ const App = () => {
             lineHeight: '1em'
           }}
         >
-          <Heading as="h4">Can I specifically use... ?</Heading>
+          <Heading
+            as="h3"
+            sx={{
+              letterSpacing: '-0.01em',
+            }}
+          >Can I specifically use... ?</Heading>
           <Text
             sx={{
               display: 'block',
@@ -61,7 +66,6 @@ const App = () => {
       </Flex>
       <Flex
         sx={{
-          height: '100px',
           flexDirection: ['column', 'column', 'row'],
           minHeight: `calc(100vh - ${HEADER_HEIGHT})`,
           p: [4, 5],

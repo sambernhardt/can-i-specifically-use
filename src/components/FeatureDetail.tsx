@@ -12,6 +12,7 @@ import { bcdData, bcdDataAsKeys } from '../data';
 import useCanIUseData from '../hooks/useCanIUseData';
 import CompatibilityTable from './CompatibilityTable';
 import PlaceholderDetail from './PlaceholderDetail';
+import { useState } from 'react';
 
 export type SupportStatusShape = {
   icon: React.FC,
@@ -27,7 +28,7 @@ export type SupportStatusShape = {
 const supportStatuses: Record<string, SupportStatusShape> = {
   veryWellSupported: {
     icon: CheckCircle,
-    heading: 'Very well supported',
+    heading: 'Very well-supported',
     message: `The selected API is widely supported by most modern browsers, but it's recommended to have fallback options in place for a small percentage of users who may encounter compatibility issues.`,
     palette: 'success',
     // fakeStats: {
@@ -47,7 +48,7 @@ const supportStatuses: Record<string, SupportStatusShape> = {
   },
   notWellSupported: {
     icon: WarningCircle,
-    heading: 'Not well supported',
+    heading: 'Not well-supported',
     message: `Consider exploring alternative solutions or providing alternative workflows to accommodate users who may not have access to this API. Testing and graceful degradation strategies are essential.`,
     palette: 'danger',
     // fakeStats: {
@@ -98,43 +99,16 @@ function calculateFontSizeMobile(length: number) {
 }
 
 const FeatureDetail = ({ csvData }: { csvData: any }) => {
+  const [numberOfRowsToShow, setNumberOfRowsToShow] = useState(10);
   const { featureId } = useLoaderData() as { featureId: string };
-  if (!featureId) {
-    return (
-      <Flex
-        sx={{
-          flexDirection: 'column',
-          justifyContent: 'center',
-          textAlign: 'center',
-          alignItems: 'center',
-          height: '100%',
-          gap: 4,
-          color: 'textNeutralSecondary',
-        }}
-      >
-        <Text
-          sx={{
-            fontSize: 4,
-            color: 'inherit'
-          }}
-        >
-          “I wonder if we can use this feature with our current users”
-        </Text>
-        <Text
-          sx={{
-            fontSize: 2,
-            color: 'inherit'
-          }}
-        >
-          - Me, frequently
-        </Text>
-      </Flex>
-    );
-  }
 
   const featureIdPath = featureId.replace(/\+/g, '.');
   const selectedFeature = get(bcdDataAsKeys, featureIdPath);
   const selectedFeatureCompatibilityData = get(bcdData, selectedFeature.path + '.__compat.support', '');
+
+  function handleShowMore() {
+    setNumberOfRowsToShow(r => r + 10);
+  }
 
   const {
     parsedCSVData,
@@ -152,7 +126,7 @@ const FeatureDetail = ({ csvData }: { csvData: any }) => {
     <Box
       sx={{
         maxWidth: '1000px',
-        mb: 7
+        mb: 4
       }}
     >
       {featureIdPath ? (
@@ -218,17 +192,17 @@ const FeatureDetail = ({ csvData }: { csvData: any }) => {
                     alignItems: 'center',
                     textDecoration: 'none',
                     gap: 2,
-                    fontFamily: 'body',
                     cursor: 'pointer',
-                    bg: 'backgroundSurface',
-                    border: '1px solid',
-                    borderColor: 'borderNeutralPrimary',
-                    boxShadow: 'default',
-                    color: 'textNeutralPrimary',
                     px: 3,
                     py: 2,
                     borderRadius: '8px',
                     fontSize: 2,
+                    fontFamily: 'GeneralSans-Medium',
+                    color: 'textNeutralPrimary',
+                    bg: 'backgroundSurface',
+                    border: '1px solid',
+                    borderColor: 'borderNeutralPrimary',
+                    boxShadow: 'default',
 
                     opacity: selectedFeature.mdn_url ? 1 : 0,
                     pointerEvents: selectedFeature.mdn_url ? 'auto' : 'none',
@@ -265,40 +239,91 @@ const FeatureDetail = ({ csvData }: { csvData: any }) => {
                 >
                   <SupportCard
                     label="Supported"
-                    stat={`${percentageSupported}%`}
+                    stat={percentageSupported}
+                    units="%"
                     icon={CheckCircle}
                     subtext={`${numberSupported.toLocaleString()} users`}
                   />
                   <SupportCard
                     label="Not supported"
-                    stat={`${percentageNotSupported}%`}
+                    stat={percentageNotSupported}
+                    units="%"
                     icon={WarningCircle}
                     subtext={`${numberNotSupported.toLocaleString()} users`}
                   />
                 </Flex>
                 <Box
                   sx={{
-                    overflow: 'auto',
+                    overflow: 'visible',
                     width: '100%',
                   }}
                 >
-                  <CompatibilityTable data={parsedCSVData} />
+                  <CompatibilityTable
+                    data={parsedCSVData}
+                    limit={numberOfRowsToShow}
+                    onShowMore={handleShowMore}
+                  />
                 </Box>
               </>
-            ) : <PlaceholderDetail selectedFeatureCompatibilityData={selectedFeatureCompatibilityData} />}
+            ) : (
+              <PlaceholderDetail
+                selectedFeatureCompatibilityData={selectedFeatureCompatibilityData}
+              />
+            )}
           </Flex>
         </div>
       ) : (
         <p>Nothing selected</p>
       )}
-      <pre>
+      {/* <pre>
         {csvData}
       </pre>
       <pre>
         {JSON.stringify(selectedFeatureCompatibilityData, null, 2)}
-      </pre>
+      </pre> */}
     </Box>
   );
 }
 
-export default FeatureDetail
+const FeatureDetailContainer = ({ csvData }: { csvData: any }) => {
+  const { featureId } = useLoaderData() as { featureId: string };
+
+  if (!featureId) {
+    return (
+      <Flex
+        sx={{
+          flexDirection: 'column',
+          justifyContent: 'center',
+          textAlign: 'center',
+          alignItems: 'center',
+          height: '100%',
+          gap: 4,
+          color: 'textNeutralSecondary',
+        }}
+      >
+        <Text
+          sx={{
+            fontSize: 4,
+            color: 'inherit'
+          }}
+        >
+          “I wonder if we can use this feature with our current users”
+        </Text>
+        <Text
+          sx={{
+            fontSize: 2,
+            color: 'inherit'
+          }}
+        >
+          - Me, frequently
+        </Text>
+      </Flex>
+    );
+  }
+
+  return (
+    <FeatureDetail csvData={csvData} />
+  );
+}
+
+export default FeatureDetailContainer;

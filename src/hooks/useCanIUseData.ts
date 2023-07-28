@@ -117,8 +117,8 @@ const useCanIUseData: CanIUseDataType = (csvData, selectedFeatureCompatibilityDa
         .reduce((acc, row) => acc + row.Users, 0);
   
       const total = _numberSupported + _numberNotSupported;
-      const _percentageSupported = Math.round((_numberSupported / total) * 100);
-      const _percentageNotSupported = Math.round((_numberNotSupported / total) * 100);
+      const _percentageSupported = ((_numberSupported / total) * 100).toFixed(1);
+      const _percentageNotSupported = ((_numberNotSupported / total) * 100).toFixed(1);
   
       let _supportMessageKey: SupportStatusKey = 'notWellSupported';
       if (_numberSupported / total >= 0.5) {

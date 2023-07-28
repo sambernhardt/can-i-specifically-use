@@ -5,7 +5,8 @@ import Icon from './Icon'
 interface Props {
   label: string,
   icon: React.FC,
-  stat: string,
+  stat: string | number,
+  units?: string,
   subtext: string,
 }
 
@@ -14,6 +15,7 @@ const SupportCard: FC<Props> = ({
   icon,
   stat,
   subtext,
+  units,
 }) => {
   return (
     <Flex
@@ -44,6 +46,11 @@ const SupportCard: FC<Props> = ({
           }}
         >
           {stat}
+          {units && (
+            <Text sx={{ color: 'textNeutralSecondary', ml: 1 }}>
+              {units}
+            </Text> 
+          )}
         </Text>
         <Text
           sx={{
