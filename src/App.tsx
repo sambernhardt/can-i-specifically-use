@@ -1,10 +1,8 @@
 import { Box, Divider, Flex, Heading, Link, Text } from "theme-ui"
-import FeatureInputSearch from "./components/FeatureSearchInput"
 import FeatureDetail from "./components/FeatureDetail"
 import ThemeSwitcher from "./components/ThemeSwitcher";
 import exampleData from './exampleData.csv?raw';
 import usePersistedState from "./hooks/usePersistedState";
-import UsageDataInput from "./components/input/UsageDataInput";
 import { CSVDataType } from "./types";
 import { validateAndParseCSVString } from "./utils";
 import LeftColumn from "./components/LeftColumn";

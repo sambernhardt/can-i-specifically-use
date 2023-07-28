@@ -13,7 +13,7 @@ interface Props {
 }
 
 const LeftColumn: FC<Props> = ({ csvData, setCsvData }) => {
-  const { theme } = useThemeUI();
+  const { theme } = useThemeUI() as any;
   const isMobile = useBreakpoint('<' + theme.breakpoints[0]);
   const [showUsageDataInput, setShowUsageDataInput] = useState(false);
 
