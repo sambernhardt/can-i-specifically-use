@@ -11,7 +11,7 @@ const useBreakpoint = (breakpoint: string) => {
   }
 
   const [matches, setMatches] = React.useState(false)
-  const [mediaQueryList, setMediaQueryList] = React.useState<MediaQueryList | null>(null)
+  const [, setMediaQueryList] = React.useState<MediaQueryList | null>(null)
 
   React.useEffect(() => {
     const mediaQueryList = window.matchMedia(`(${direction}-width: ${breakpoint.slice(1)})`)
