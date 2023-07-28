@@ -9,6 +9,8 @@ import greatBrowserSupport from '../../exampleUsageData/greatBrowserSupport.csv?
 import moderateBrowserSupport from '../../exampleUsageData/greatBrowserSupport.csv?raw';
 import poorBrowserSupport from '../../exampleUsageData/poorBrowserSupport.csv?raw';
 import { validateAndParseCSVString } from '../../utils';
+import { ZodError } from 'zod';
+import { uniq } from 'lodash';
 
 const presets = [
   {
@@ -50,11 +52,21 @@ const UsageDataInput = forwardRef<any, UsageDataInputProps>(({
   csvData,
   setCsvData,
 }, ref) => {
+  const [isDraggingOver, setIsDraggingOver] = useState(false);
   const [error, setError] = useState<string | undefined>(undefined);
+  const [loading, setLoading] = useState(false);
+
+  function setValueAndClearState(data: CSVDataType) {
+    setCsvData(data);
+    setError(undefined);
+    setIsDraggingOver(false);
+    setLoading(false);
+  }
 
   function createCSVData(data: string, name: string): CSVDataType {
     try {
       const parsedData = validateAndParseCSVString(data);
+
       return {
         rawData: data,
         parsedData,
@@ -62,11 +74,18 @@ const UsageDataInput = forwardRef<any, UsageDataInputProps>(({
         uploadedAt: new Date().toISOString(),
       }
     } catch (error) {
-      throw new Error("Couldn't parse CSV data");
+      if (error instanceof ZodError) {
+        console.log(error);
+        throw new Error("Couldn't parse CSV data: " + uniq(error.issues.map(i => i.message)).join(',\n'));
+      } else {
+        throw new Error("Couldn't parse CSV data");
+      }
     }
   }
 
   function handleFileUpload(e: any) {
+    setLoading(true);
+    setIsDraggingOver(false);
     const file = e.target.files[0];
     const reader = new FileReader();
 
@@ -75,13 +94,18 @@ const UsageDataInput = forwardRef<any, UsageDataInputProps>(({
       if (typeof csvData === 'string') {
         try {
           const _csvData = createCSVData(csvData,  file.name);
-          setCsvData(_csvData);
-          setError(undefined);
+          setValueAndClearState(_csvData);
         } catch (error) {
           if (error instanceof Error) {
+            setCsvData(null);
+            setIsDraggingOver(false);
             setError(error.message);
+            setLoading(false);
           } else {
+            setCsvData(null);
+            setIsDraggingOver(false);
             setError('Something went wrong');
+            setLoading(false);
           }
         }
       }
@@ -96,7 +120,7 @@ const UsageDataInput = forwardRef<any, UsageDataInputProps>(({
 
     if (preset) {
       const _csvData = createCSVData(preset.data, preset.label);
-      setCsvData(_csvData);
+      setValueAndClearState(_csvData);
     } else {
       throw new Error(`No preset found with id ${presetId}`);
     }
@@ -109,7 +133,7 @@ const UsageDataInput = forwardRef<any, UsageDataInputProps>(({
       labelAction={(
         <Select
           onChange={handleUsePreset}
-          value=""
+          defaultValue=""
           sx={{
             display: 'inline-block',
             bg: 'transparent',
@@ -128,18 +152,99 @@ const UsageDataInput = forwardRef<any, UsageDataInputProps>(({
             },
           }}
         >
-          <option value="" disabled selected>Use a preset</option>
+          <option value="" disabled>Use a preset</option>
           {presets.map(preset => (
-            <option value={preset.id}>{preset.label}</option>
+            <option key={preset.id} value={preset.id}>{preset.label}</option>
           ))}
         </Select>
       )}
     >
-      {csvData ? (
+      {(!csvData || isDraggingOver) ? (
+        <>
+          <Flex
+            onDragLeave={() => setIsDraggingOver(false)}
+            onDragOver={() => setIsDraggingOver(true)}
+            onDrop={() => setIsDraggingOver(false)}
+            sx={{
+              position: 'relative',
+              flexDirection: 'column',
+              alignItems: 'center',
+              p: 5,
+              gap: 2,
+              width: '100%',
+              borderRadius: '12px',
+              border: '1px dashed',
+              bg: 'transparent',
+              borderColor: 'borderNeutralPrimary',
+              boxShadow: 'default',
+              transition: 'all 0.2s ease-in-out',
+
+              ...(error && {
+                bg: 'rgba(255, 0, 0, 0.1)',
+                borderColor: 'red',
+              }),
+
+              ...(isDraggingOver && {
+                bg: 'backgroundFocusAlpha',
+                borderColor: 'borderFocus',
+              }),
+    
+              '&:focus': {
+                outline: 'none',
+                borderColor: 'borderFocus',
+                boxShadow: 'focus',
+              },
+            }}
+          >
+            <Input
+              type="file"
+              accept=".csv"
+              onChange={handleFileUpload}
+              sx={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                opacity: 0,
+                cursor: 'pointer',
+              }}
+            />
+            <Icon
+              icon={CloudUpload}
+              sx={{
+                color: 'textNeutralSecondary',
+              }}
+            />
+            <Text
+              sx={{
+                color: 'textNeutralSecondary',
+                fontSize: 0,
+              }}
+            >
+              {loading ? 'Loading...' : 'Upload CSV of your usage data'}
+            </Text>
+          </Flex>
+          {/* <Link
+            sx={{
+              display: 'inline-block',
+              mt: 3,
+              fontSize: 0,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            Download template
+          </Link> */}
+        </>
+      ) : (
         <Box
           sx={{
             position: 'relative',
           }}
+          onDragEnter={() => setIsDraggingOver(true)}
+          onDragLeave={() => setIsDraggingOver(false)}
+          onMouseLeave={() => setIsDraggingOver(false)}
+          onDrop={() => setIsDraggingOver(false)}
         >
           <Flex
             ref={ref}
@@ -191,69 +296,6 @@ const UsageDataInput = forwardRef<any, UsageDataInputProps>(({
             </Button>
           </Flex>
         </Box>
-      ) : (
-        <>
-          <Flex
-            sx={{
-              position: 'relative',
-              flexDirection: 'column',
-              alignItems: 'center',
-              p: 5,
-              gap: 2,
-              width: '100%',
-              borderRadius: '12px',
-              border: '1px dashed',
-              borderColor: error ? 'red' : 'borderNeutralPrimary',
-              boxShadow: 'default',
-              transition: 'all 0.2s ease-in-out',
-    
-              '&:focus': {
-                outline: 'none',
-                borderColor: 'borderFocus',
-                boxShadow: 'focus',
-              },
-            }}
-          >
-            <Input
-              type="file"
-              accept=".csv"
-              onChange={handleFileUpload}
-              sx={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                opacity: 0,
-                cursor: 'pointer',
-              }}
-            />
-            <Icon
-              icon={CloudUpload}
-              sx={{
-                color: 'textNeutralSecondary',
-              }}
-            />
-            <Text
-              sx={{
-                color: 'textNeutralSecondary',
-                fontSize: 0,
-              }}
-            >
-              Upload CSV of your usage data
-            </Text>
-          </Flex>
-          {/* <Link
-            sx={{
-              display: 'inline-block',
-              mt: 3,
-              fontSize: 0,
-              whiteSpace: 'nowrap',
-            }}
-          >
-            Download template
-          </Link> */}
-        </>
       )}
     </Fieldset>
   )

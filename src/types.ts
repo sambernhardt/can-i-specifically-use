@@ -1,5 +1,19 @@
 import { z } from "zod";
 
+const customErrorMap: z.ZodErrorMap = (issue, ctx) => {
+  if (issue.code === z.ZodIssueCode.invalid_type) {
+    if (issue.expected === "string") {
+      return { message: `"${JSON.stringify(issue.received)}" is not a valid value for ${issue.path.slice(-1)}` };
+    }
+  } else if (issue.code === z.ZodIssueCode.invalid_enum_value) {
+    console.log(issue);
+    return { message: `"${issue.received}" is not a valid value for ${issue.path.slice(-1)}` };
+  }
+  return { message: ctx.defaultError };
+};
+
+z.setErrorMap(customErrorMap);
+
 export const deviceCategories = [
   'desktop',
   'mobile',
@@ -9,16 +23,17 @@ export const deviceCategories = [
 export type DeviceCategory = typeof deviceCategories[number];
 
 export const rawDataBrowsers = [
+  'Android WebView',
   'Chrome',
   'Edge',
   'Firefox',
   'IE',
+  'Internet Explorer',
+  'Oculus Browser',
   'Opera',
-  'Safari',
   'Safari (in-app)',
+  'Safari',
   'Samsung Internet',
-  'Android WebView',
-  'Oculus Browser'
 ] as const;
 
 export type RawDataBrowsersType = typeof rawDataBrowsers[number] | null;
@@ -67,17 +82,19 @@ export type CompatibilityDataType = Record<BrowserKeys,
 
 
 export const ParsedUsageDataItem = z.object({
-  'Browser': z.enum(rawDataBrowsers),
+  // TODO: See if there's a way to throw warnings instead of errors for invalid values
+  // 'Browser': z.enum(rawDataBrowsers),
+  'Browser': z.string(),
   'Browser Version': z.string(),
   'Device Category': z.enum(['desktop', 'mobile', 'tablet']),
-  'Users': z.string(),
+  'Users': z.string().transform((val) => parseInt(val.replace(/,/g, ''))),
 });
 export const ParsedUsageDataArray = z.array(ParsedUsageDataItem);
 export type ParsedUsageDataType = z.infer<typeof ParsedUsageDataItem>;
 export type ParsedUsageDataArrayType = z.infer<typeof ParsedUsageDataArray>;
 
 export type DecoratedUsageDataType = ParsedUsageDataType & {
-  'Browser Key': BrowserKeys;
+  'Browser Key': BrowserKeys | null;
   'Compatible': boolean | null;
 }
 

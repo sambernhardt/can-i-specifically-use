@@ -146,16 +146,6 @@ const FeatureDetail = ({ csvData }: { csvData: any }) => {
     error
   } = useCanIUseData(csvData, selectedFeatureCompatibilityData);
 
-  console.log({
-    parsedCSVData,
-    percentageSupported,
-    percentageNotSupported,
-    numberSupported,
-    numberNotSupported,
-    supportMessageKey,
-    error
-  })
-
   const supportStatus = supportStatuses[supportMessageKey];
 
   return (

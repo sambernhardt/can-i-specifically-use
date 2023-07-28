@@ -1,6 +1,7 @@
 import { coerce, gte, valid } from "semver";
-import { BrowserKeys, CompatibilityDataType, ParsedUsageDataArray, ParsedUsageDataArrayType, ParsedUsageDataType } from "./types";
+import { BrowserKeys, CompatibilityDataType, ParsedUsageDataArray, ParsedUsageDataArrayType } from "./types";
 import { isArray } from "lodash";
+import Papa from "papaparse";
 
 function isObject(obj: any) {
   return (
@@ -66,20 +67,14 @@ export function makeGenericMdnDocsUrl(url: string) {
   return url.replace('/en-us/', '/');
 }
 
-export function parseCSV(csv: string): Record<string, string>[] {
+export function parseCSV(csv: string): unknown[] {
   try {
-    const rows = csv.split('\n');
-    const headers = rows[0].split(',');
-    const result: Record<string, string>[] = [];
-    rows.slice(1).forEach(row => {
-      const obj: any = {};
-      const rowData = row.split(',');
-      headers.forEach((header, i) => {
-        obj[header] = rowData[i];
-      });
-      result.push(obj);
-    });
-    return result;
+    const parsed = Papa.parse(csv, {
+      header: true,
+      skipEmptyLines: true,
+    }).data;
+
+    return parsed
   } catch (e) {
     if (e instanceof Error) {
       throw new Error('Could not parse CSV: ' + e.message);
@@ -98,11 +93,19 @@ export function validateAndParseCSVString(csv: string): ParsedUsageDataArrayType
 
 export function isCompatible(
   compatData: CompatibilityDataType,
-  browserKey: BrowserKeys,
+  browserKey: BrowserKeys | null,
   version: string
 ): boolean | null {
   try {
+    if (!browserKey) {
+      return null;
+    }
+
     const compatibilityDataForBrowser = compatData[browserKey];
+    if (!compatibilityDataForBrowser) {
+      return null;
+    }
+
     let minimumCompatibleVersion = null;
 
     // TODO: Handle notes and flags
