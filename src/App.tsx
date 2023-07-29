@@ -68,7 +68,7 @@ const App = () => {
       <Flex
         sx={{
           flexDirection: ['column', 'column', 'row'],
-          height: `calc(100vh - ${HEADER_HEIGHT})`,
+          height: ['auto', `calc(100vh - ${HEADER_HEIGHT})`],
           p: [4, 5],
           gap: [4, 5],
         }}
@@ -102,7 +102,7 @@ const App = () => {
         <Box
           sx={{
             flex: [1, 3],
-            overflow: 'scroll',
+            overflow: ['auto', 'auto', 'visible'],
           }}
         >
           <FeatureDetail csvData={csvData ? csvData.rawData : ''} />

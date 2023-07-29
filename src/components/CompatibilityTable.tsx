@@ -76,14 +76,19 @@ const CompatibilityTable: FC<Props> = ({
   const dataToShow = limit ? data.slice(0, limit) : data;
 
   return (
-    <>
+    <Box
+      sx={{
+        width: '100%',
+        overflowX: 'scroll',
+      }}
+    >
       <Box
         as="table"
         sx={{
           fontFamily: 'body',
-          width: '100%',
           fontSize: 1,
           textAlign: 'left',
+          width: '100%',
           'tr td, tr th': {
             py: 3,
             borderBottom: '1px solid',
@@ -133,6 +138,7 @@ const CompatibilityTable: FC<Props> = ({
               borderRadius: '8px',
               fontSize: 1,
               gap: 2,
+              mb: 5,
             }}
           >
             Show 10 more
@@ -140,7 +146,7 @@ const CompatibilityTable: FC<Props> = ({
           </Button>
         </Flex>
       )}
-    </>
+    </Box>
   )
 }
 
