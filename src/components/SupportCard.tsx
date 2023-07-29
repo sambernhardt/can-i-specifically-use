@@ -40,8 +40,9 @@ const SupportCard: FC<Props> = ({
           sx={{
             fontFamily: 'heading',
             display: 'block',
-            fontSize: [4, 6],
+            fontSize: [5, 6],
             fontWeight: 600,
+            letterSpacing: '0.02em',
             mb: 3,
           }}
         >

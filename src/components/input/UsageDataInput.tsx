@@ -146,6 +146,7 @@ const UsageDataInput = forwardRef<any, UsageDataInputProps>(({
             border: 'none',
             fontFamily: 'body',
             color: 'textLink',
+            fontWeight: 500,
             fontSize: 0,
 
             '+ svg': {
@@ -271,9 +272,11 @@ const UsageDataInput = forwardRef<any, UsageDataInputProps>(({
               pr: 12 + ICON_WIDTH + 12 + 'px',
               width: '100%',
               borderRadius: '12px',
+              lineHeight: 1,
               border: '1px solid',
               borderColor: 'borderNeutralPrimary',
               fontFamily: 'body',
+              fontWeight: 500,
             }}
           >
             {csvData.name}
@@ -281,6 +284,7 @@ const UsageDataInput = forwardRef<any, UsageDataInputProps>(({
               sx={{
                 fontSize: 0,
                 color: 'textNeutralSecondary',
+                fontWeight: 400,
               }}
             >
               Uploaded {formatUploadedDate(csvData.uploadedAt)}

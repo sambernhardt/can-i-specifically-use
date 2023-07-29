@@ -22,7 +22,7 @@ export const theme: Theme = {
     textSuccessPrimary: '#224d22',
     textSuccessSecondary: '#689566',
     textWarningPrimary: '#44210a',
-    textWarningSecondary: '#b1834a',
+    textWarningSecondary: '#704d22',
 
     background: '#f6f6f6',
     backgroundSurface: '#fff',
@@ -63,13 +63,14 @@ export const theme: Theme = {
   },
   shadows: {
     default: '0px 3px 16px 0px rgba(0, 0, 0, 0.04), 0px 0px 14px 0px rgba(0, 0, 0, 0.06)',
+    overlay: '0px 14px 24px 0px rgba(0, 0, 0, 0.04), 0px 0px 40px 0px rgba(0, 0, 0, 0.1)',
     focus: '0px 0px 0px 4px rgba(9, 92, 255, 0.2)',
   },
   space: [
     0, 4, 8, 16, 24, 32, 64, 128, 256
   ],
   fontSizes: [
-    13, 15, 17, 20, 24, 32, 48, 56
+    13, 15, 17, 20, 24, 32, 48, 56, 64, 72, 96, 128
   ],
   breakpoints: [40, 52, 64].map((n) => n + 'em'),
   buttons: {
@@ -105,6 +106,7 @@ export const theme: Theme = {
     a: {
       fontFamily: 'body',
       color: 'textLink',
+      fontWeight: 500,
     },
     hr: {
       color: 'borderNeutralSecondary',
@@ -115,6 +117,8 @@ export const theme: Theme = {
       fontFamily: 'body',
     },
     label: {
+      fontSize: 1,
+      fontWeight: 500,
       fontFamily: 'body',
     },
   }

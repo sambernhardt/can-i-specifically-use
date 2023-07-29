@@ -50,7 +50,7 @@ const App = () => {
           <Heading
             as="h3"
             sx={{
-              letterSpacing: '-0.01em',
+              fontFamily: 'body'
             }}
           >Can I specifically use... ?</Heading>
           <Text

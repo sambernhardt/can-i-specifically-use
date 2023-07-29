@@ -10,8 +10,9 @@ import Icon from './Icon';
 import { bcdData, bcdDataAsKeys } from '../data';
 
 import useCanIUseData from '../hooks/useCanIUseData';
+import SupportTable from './SupportTable';
 import PlaceholderDetail from './PlaceholderDetail';
-import { useState } from 'react';
+import { Fragment, ReactNode, useState } from 'react';
 import SupportCardWrapper from './SupportCardWrapper';
 
 export type SupportStatusShape = {
@@ -57,41 +58,63 @@ const supportStatuses: Record<string, SupportStatusShape> = {
 export type SupportStatusKey = keyof typeof supportStatuses;
 
 // The smaller the length, the larger the font size
-function calculateFontSize(length: number) {
-  const fontSizeMin = 42;
-  const fontSizeMax = 74;
-  const characterLengthMin = 10;
-  const characterLengthMax = 40;
+// function calculateFontSize(length: number) {
+//   const fontSizeMin = 42;
+//   const fontSizeMax = 74;
+//   const characterLengthMin = 10;
+//   const characterLengthMax = 40;
 
-  // Interpolate the font size based on the length of the title
-  if (length <= characterLengthMin) {
-    return fontSizeMax;
-  } else if (length >= characterLengthMax) {
-    return fontSizeMin;
-  } else { 
-    const slope = (fontSizeMax - fontSizeMin) / (characterLengthMin - characterLengthMax);
-    const yIntercept = fontSizeMax - (slope * characterLengthMin);
-    return (slope * length) + yIntercept;
+//   // Interpolate the font size based on the length of the title
+//   if (length <= characterLengthMin) {
+//     return fontSizeMax;
+//   } else if (length >= characterLengthMax) {
+//     return fontSizeMin;
+//   } else { 
+//     const slope = (fontSizeMax - fontSizeMin) / (characterLengthMin - characterLengthMax);
+//     const yIntercept = fontSizeMax - (slope * characterLengthMin);
+//     return (slope * length) + yIntercept;
+//   }
+// }
+
+// // The smaller the length, the larger the font size
+// function calculateFontSizeMobile(length: number) {
+//   const fontSizeMin = 22;
+//   const fontSizeMax = 52;
+//   const characterLengthMin = 10;
+//   const characterLengthMax = 40;
+
+//   // Interpolate the font size based on the length of the title
+//   if (length <= characterLengthMin) {
+//     return fontSizeMax;
+//   } else if (length >= characterLengthMax) {
+//     return fontSizeMin;
+//   } else { 
+//     const slope = (fontSizeMax - fontSizeMin) / (characterLengthMin - characterLengthMax);
+//     const yIntercept = fontSizeMax - (slope * characterLengthMin);
+//     return (slope * length) + yIntercept;
+//   }
+// }
+
+function addWordBreaks(text: string): ReactNode[] {
+  if (text.includes('-')) {
+    // Split on hyphens
+    return text.split('-').map((word, index) => (
+      <Fragment key={index}>
+        {word}
+        {index < text.split('-').length - 1 && '-'}
+        <wbr />
+      </Fragment>
+    ));
+  } else {
+    // Split on camelCase
+    return text.split(/(?=[A-Z])/).map((word, index) => (
+      <Fragment key={index}>
+        {word}
+        <wbr />
+      </Fragment>
+    ));
   }
-}
 
-// The smaller the length, the larger the font size
-function calculateFontSizeMobile(length: number) {
-  const fontSizeMin = 22;
-  const fontSizeMax = 52;
-  const characterLengthMin = 10;
-  const characterLengthMax = 40;
-
-  // Interpolate the font size based on the length of the title
-  if (length <= characterLengthMin) {
-    return fontSizeMax;
-  } else if (length >= characterLengthMax) {
-    return fontSizeMin;
-  } else { 
-    const slope = (fontSizeMax - fontSizeMin) / (characterLengthMin - characterLengthMax);
-    const yIntercept = fontSizeMax - (slope * characterLengthMin);
-    return (slope * length) + yIntercept;
-  }
 }
 
 const FeatureDetail = ({ csvData }: { csvData: any }) => {
@@ -196,14 +219,16 @@ const FeatureDetail = ({ csvData }: { csvData: any }) => {
                 <Heading
                   as="h2"
                   sx={{
-                    fontSize: [
-                      calculateFontSizeMobile(selectedFeature.name.length),
-                      calculateFontSize(selectedFeature.name.length),
-                    ],
+                    // fontSize: [
+                    //   calculateFontSizeMobile(selectedFeature.name.length),
+                    //   calculateFontSize(selectedFeature.name.length),
+                    // ],
+                    fontSize: [6, 8],
+                    letterSpacing: '0.03em',
                     wordBreak: 'break-word',
                   }}
                 >
-                  {selectedFeature.name}
+                  {addWordBreaks(selectedFeature.name)}
                 </Heading>
                 <Link
                   href={selectedFeature.mdn_url}
@@ -266,6 +291,18 @@ const FeatureDetail = ({ csvData }: { csvData: any }) => {
                     </SupportCardWrapper> 
                   ))}
                 </Flex>
+                <Box
+                  sx={{
+                    overflow: 'visible',
+                    width: '100%',
+                  }}
+                >
+                  <SupportTable
+                    data={parsedCSVData}
+                    limit={numberOfRowsToShow}
+                    onShowMore={handleShowMore}
+                  />
+                </Box>
               </>
             ) : (
               <PlaceholderDetail

@@ -9,9 +9,9 @@ interface Props extends BoxProps {
 const sizeLookup = {
   sm: {
     borderRadius: '12px',
-    fontSize: 1,
-    py: 1,
-    px: 2,
+    fontSize: 0,
+    py: '1px',
+    px: '4px',
     color: 'textNeutralSecondary',
   },
   md: {

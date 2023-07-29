@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Fuse from 'fuse.js';
 import { Box, Button, Flex, Text } from 'theme-ui';
 import { Cancel, Search } from 'iconoir-react';
@@ -29,6 +29,7 @@ const FeatureInputSearch = () => {
   const debouncedSearch = useDebounce<string>(search, 20);
   const [showResults, setShowResults] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const resultsRef = useRef<HTMLDivElement>(null);
 
   const results = useMemo(() => {
     const _results = fuse.search(debouncedSearch).map((result: any) => result.item).splice(0, 15);
@@ -37,6 +38,22 @@ const FeatureInputSearch = () => {
 
   const shouldShowResults = search.length > 0 && showResults;
   const showClearButton = search.length > 0;
+
+  useEffect(() => {
+    function handleClickOutside(event: any) {
+      if (resultsRef.current && !resultsRef.current.contains(event.target)) {
+        setShowResults(false);
+      }
+    }
+
+    if (shouldShowResults) {
+      window.addEventListener('click', handleClickOutside);
+    }
+
+    return () => {
+      window.removeEventListener('click', handleClickOutside);
+    }
+  }, [resultsRef, shouldShowResults]);
 
   return (
     <Box
@@ -111,17 +128,18 @@ const FeatureInputSearch = () => {
       />
       {shouldShowResults && (
         <Box
+          ref={resultsRef}
           sx={{
             position: 'absolute',
-            top: 'calc(100% + 8px)',
+            top: 'calc(100% + 12px)',
             left: 0,
-            width: '100%',
+            width: (theme: any) => [`calc(100vw - ${theme.space[4] * 2}px)`, '100%'],
             bg: 'backgroundSurface',
             zIndex: 1,
             maxHeight: '300px',
             overflow: 'scroll',
-            borderRadius: '16px',
-            boxShadow: 'default',
+            borderRadius: '12px',
+            boxShadow: 'overlay',
           }}
         >
           {results.length > 0 ? results.map((result: any) => (
@@ -135,9 +153,9 @@ const FeatureInputSearch = () => {
                 }}
                 variant="ghost"
                 sx={{
-                  color: 'textNeutralPrimary',
                   display: 'flex',
-                  alignItems: 'baseline',
+                  color: 'textNeutralPrimary',
+                  px: 3,
                   py: '15px',
                   width: '100%',
                   textAlign: 'left',
@@ -147,19 +165,47 @@ const FeatureInputSearch = () => {
                   border: 'none',
                   borderBottom: '1px solid',
                   borderBottomColor: 'borderNeutralSecondary',
+                  textOverflow: 'ellipsis',
+                  overflow: 'hidden',
+                  WebkitLineClamp: 1,
                 }}
               >
-                <CategoryBadge category={result.category} size="sm" />
-                {result.parentPath && (
+                <Flex
+                  sx={{
+                    flex: 1,
+                    flexDirection: 'column',
+                    gap: 1,
+                  }}
+                >
                   <Text
                     sx={{
-                      color: 'textNeutralSecondary',
+                      fontWeight: 500,
+                      textOverflow: 'ellipsis',
+                      overflow: 'hidden',
                     }}
                   >
-                    {result.parentPath}
+                    {result.name}
                   </Text>
-                )}
-                {result.name}
+                  {result.parentPath && (
+                    <Text
+                      as="span"
+                      sx={{
+                        color: 'textNeutralSecondary',
+                        mr: 1,
+                        fontSize: 0,
+                      }}
+                    >
+                      {result.parentPath}
+                    </Text>
+                  )}
+                </Flex>
+                <CategoryBadge
+                  category={result.category}
+                  size="sm"
+                  sx={{
+                    flexShrink: 0,
+                  }}
+                />
               </Button>
             </div>
           )) : (
