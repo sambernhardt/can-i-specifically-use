@@ -9,8 +9,8 @@ const buttonStyles = {
 
 export const theme: Theme = {
   fonts: {
-    body: 'Inter, system-ui, sans-serif',
-    heading: 'Inter Tight, system-ui, sans-serif',
+    body: 'system-ui, sans-serif',
+    heading: 'system-ui, sans-serif',
     monospace: 'Menlo, monospace',
   },
   colors: {
