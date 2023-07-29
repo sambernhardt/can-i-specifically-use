@@ -91,13 +91,13 @@ export function validateAndParseCSVString(csv: string): ParsedUsageDataArrayType
 }
 
 
-export function isCompatible(
+export function isSupported(
   compatData: CompatibilityDataType,
   browserKey: BrowserKeys | null,
   version: string
 ): boolean | null {
   try {
-    if (!browserKey) {
+    if (!browserKey || version === '(not set)') {
       return null;
     }
 
@@ -106,13 +106,13 @@ export function isCompatible(
       return null;
     }
 
-    let minimumCompatibleVersion = null;
+    let minimumSupportedVersion = null;
 
     // TODO: Handle notes and flags
     if (isArray(compatibilityDataForBrowser)) {
       compatibilityDataForBrowser.forEach((compatibilityData) => {
         if (compatibilityData.version_added) {
-          minimumCompatibleVersion = compatibilityData.version_added;
+          minimumSupportedVersion = compatibilityData.version_added;
         }
       });
     } else {
@@ -120,19 +120,19 @@ export function isCompatible(
         return compatibilityDataForBrowser.version_added;
       }
 
-      minimumCompatibleVersion = compatibilityDataForBrowser.version_added;
+      minimumSupportedVersion = compatibilityDataForBrowser.version_added;
     }
 
-    if (version === null || minimumCompatibleVersion === null) {
-      console.error('Missing version or minimum compatible version');
+    if (version === null || minimumSupportedVersion === null) {
+      console.error('Missing version or minimum Supported version');
       return false;
     }
 
     const validVersion = valid(coerce(version));
-    const validMinimumCompatibleVersion = valid(coerce(minimumCompatibleVersion));
+    const validMinimumSupportedVersion = valid(coerce(minimumSupportedVersion));
 
-    if (validVersion !== null && validMinimumCompatibleVersion !== null) {
-      return gte(validVersion, validMinimumCompatibleVersion);
+    if (validVersion !== null && validMinimumSupportedVersion !== null) {
+      return gte(validVersion, validMinimumSupportedVersion);
     } else {
       return false;
     }

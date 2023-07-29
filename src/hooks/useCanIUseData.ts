@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { isCompatible, validateAndParseCSVString } from '../utils';
+import { isSupported, validateAndParseCSVString } from '../utils';
 import { SupportStatusKey } from '../components/FeatureDetail';
 import { BrowserKeys, DecoratedUsageDataType, DeviceCategory } from '../types';
 
@@ -85,8 +85,10 @@ type CanIUseDataType = (
   parsedCSVData: DecoratedUsageDataType[],
   percentageSupported: number,
   percentageNotSupported: number,
+  percentageUnknown: number,
   numberSupported: number,
   numberNotSupported: number,
+  numberUnknown: number,
   supportMessageKey: string,
   error: string | null,
 }
@@ -102,38 +104,50 @@ const useCanIUseData: CanIUseDataType = (csvData, selectedFeatureCompatibilityDa
           'Browser Key': browserKey || null,
         }
       }).map((row) => {
-        const result = isCompatible(selectedFeatureCompatibilityData, row['Browser Key'], row['Browser Version']);
+        const result = isSupported(selectedFeatureCompatibilityData, row['Browser Key'], row['Browser Version']);
         return {
           ...row,
-          Compatible: result,
+          Supported: result,
         }
       }) as DecoratedUsageDataType[];
   
       const _numberSupported = decoratedUsageData
-        .filter((row) => row.Compatible === true)
+        .filter((row) => row.Supported === true)
         .reduce((acc, row) => acc + row.Users, 0);
       const _numberNotSupported = decoratedUsageData
-        .filter((row) => row.Compatible === false)
+        .filter((row) => row.Supported === false)
+        .reduce((acc, row) => acc + row.Users, 0);
+      const _numberUnknown = decoratedUsageData
+        .filter((row) => row.Supported === null)
         .reduce((acc, row) => acc + row.Users, 0);
   
-      const total = _numberSupported + _numberNotSupported;
-      const _percentageSupported = parseFloat(((_numberSupported / total) * 100).toFixed(1));
-      const _percentageNotSupported = parseFloat(((_numberNotSupported / total) * 100).toFixed(1));
+      const total = _numberSupported + _numberNotSupported + _numberUnknown;
+      const _percentageSupported = parseFloat(((_numberSupported / total) * 100).toFixed(2));
+      const _percentageNotSupported = parseFloat(((_numberNotSupported / total) * 100).toFixed(2));
+      const _percentageUnknown = parseFloat(((_numberUnknown / total) * 100).toFixed(2));
   
-      let _supportMessageKey: SupportStatusKey = 'notWellSupported';
+      let _supportMessageKey: SupportStatusKey = 'notSupportedAtAll';
+      if (_numberSupported / total > 0) {
+        _supportMessageKey = 'notWellSupported';
+      }
       if (_numberSupported / total >= 0.5) {
         _supportMessageKey = 'moderatelySupported';
       }
-      if (_numberSupported / total >= 0.9) {
+      if (_numberSupported / total >= 0.96) {
         _supportMessageKey = 'veryWellSupported';
+      }
+      if (_numberSupported / total === 1) {
+        _supportMessageKey = 'completelySupported';
       }
   
       return {
         parsedCSVData: decoratedUsageData,
         percentageSupported: _percentageSupported,
         percentageNotSupported: _percentageNotSupported,
+        percentageUnknown: _percentageUnknown,
         numberSupported: _numberSupported,
         numberNotSupported: _numberNotSupported,
+        numberUnknown: _numberUnknown,
         supportMessageKey: _supportMessageKey,
         error: null,
       }
@@ -142,8 +156,10 @@ const useCanIUseData: CanIUseDataType = (csvData, selectedFeatureCompatibilityDa
         parsedCSVData: [],
         percentageSupported: 0,
         percentageNotSupported: 0,
+        percentageUnknown: 0,
         numberSupported: 0,
         numberNotSupported: 0,
+        numberUnknown: 0,
         supportMessageKey: 'notWellSupported',
         error: e instanceof Error ? "Couldn't parse CSV or process it or something: " + e.message : 'No error message',
       }

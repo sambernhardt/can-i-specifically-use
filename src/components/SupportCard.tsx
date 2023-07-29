@@ -22,10 +22,7 @@ const SupportCard: FC<Props> = ({
       sx={{
         flexDirection: ['column', 'row'],
         width: '100%',
-        borderRadius: '16px',
-        p: 4,
         gap: 3,
-        bg: 'backgroundSurface',
       }}
     >
       <Icon icon={icon} />

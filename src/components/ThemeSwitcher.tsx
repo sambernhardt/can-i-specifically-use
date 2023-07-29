@@ -31,7 +31,7 @@ const ThemeSwitcher = () => {
         p: 2,
       }}
     >
-      <Icon icon={mode === 'dark' ? HalfMoon : SunLight} />
+      <Icon icon={mode === 'dark' ? HalfMoon : SunLight} sx={{ fontSize: 0 }} />
     </Button>
   )
 }

@@ -95,7 +95,7 @@ export type ParsedUsageDataArrayType = z.infer<typeof ParsedUsageDataArray>;
 
 export type DecoratedUsageDataType = ParsedUsageDataType & {
   'Browser Key': BrowserKeys | null;
-  'Compatible': boolean | null;
+  'Supported': boolean | null;
 }
 
 export type CSVDataType = {

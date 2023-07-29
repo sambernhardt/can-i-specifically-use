@@ -57,18 +57,18 @@ const tableDefinition: {
     cell: d => d['Users'].toLocaleString(),
   },
   {
-    header: 'Compatible',
+    header: 'Supported',
     cell: d => {
-      if (d.Compatible === null) {
+      if (d.Supported === null) {
         return 'Unknown'
       } else {
-        return d['Compatible'] ? 'Yes' : 'No'
+        return d['Supported'] ? 'Yes' : 'No'
       }
     }
   },
 ];
 
-const CompatibilityTable: FC<Props> = ({
+const SupportTable: FC<Props> = ({
   data,
   limit,
   onShowMore
@@ -80,6 +80,7 @@ const CompatibilityTable: FC<Props> = ({
       sx={{
         width: '100%',
         overflowX: 'scroll',
+        mb: 5,
       }}
     >
       <Box
@@ -138,7 +139,6 @@ const CompatibilityTable: FC<Props> = ({
               borderRadius: '8px',
               fontSize: 1,
               gap: 2,
-              mb: 5,
             }}
           >
             Show 10 more
@@ -150,4 +150,4 @@ const CompatibilityTable: FC<Props> = ({
   )
 }
 
-export default CompatibilityTable
+export default SupportTable

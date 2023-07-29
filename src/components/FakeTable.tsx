@@ -1,5 +1,5 @@
 import useCanIUseData from '../hooks/useCanIUseData';
-import CompatibilityTable from './CompatibilityTable';
+import SupportTable from './SupportTable';
 import exampleData from '../exampleData.csv?raw';
 
 const FakeTable = ({ selectedFeatureCompatibilityData }: { selectedFeatureCompatibilityData: any }) => {
@@ -8,7 +8,7 @@ const FakeTable = ({ selectedFeatureCompatibilityData }: { selectedFeatureCompat
   } = useCanIUseData(exampleData, selectedFeatureCompatibilityData);
 
   return (
-    <CompatibilityTable data={parsedCSVData} />
+    <SupportTable data={parsedCSVData} />
   )
 }
 

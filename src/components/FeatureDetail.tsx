@@ -1,6 +1,6 @@
 import _, { get } from 'lodash';
 import { Box, Flex, Heading, Link, Text } from 'theme-ui';
-import { CheckCircle, WarningCircle, Link as LinkIcon } from 'iconoir-react';
+import { CheckCircle, WarningCircle, Link as LinkIcon, HelpCircle } from 'iconoir-react';
 import { useLoaderData } from 'react-router-dom';
 
 import CategoryBadge from './CategoryBadge';
@@ -10,52 +10,48 @@ import Icon from './Icon';
 import { bcdData, bcdDataAsKeys } from '../data';
 
 import useCanIUseData from '../hooks/useCanIUseData';
-import CompatibilityTable from './CompatibilityTable';
 import PlaceholderDetail from './PlaceholderDetail';
 import { useState } from 'react';
+import SupportCardWrapper from './SupportCardWrapper';
 
 export type SupportStatusShape = {
   icon: React.FC,
   heading: string,
   message: string,
   palette: 'success' | 'warning' | 'danger',
-  // fakeStats: {
-  //   supported: number,
-  //   notSupported: number,
-  // }
 }
 
 const supportStatuses: Record<string, SupportStatusShape> = {
+  completelySupported: {
+    icon: CheckCircle,
+    heading: 'Completely supported',
+    message: `The selected API is supported by all of the browsers in your usage data. You can safely use this API without any fallbacks or polyfills.`,
+    palette: 'success',
+  },
   veryWellSupported: {
     icon: CheckCircle,
     heading: 'Very well-supported',
     message: `The selected API is widely supported by most modern browsers, but it's recommended to have fallback options in place for a small percentage of users who may encounter compatibility issues.`,
     palette: 'success',
-    // fakeStats: {
-    //   supported: 9800,
-    //   notSupported: 784,
-    // },
   },
   moderatelySupported: {
     icon: WarningCircle,
     heading: 'Moderately supported',
     message: `The selected API has moderate support across various browsers, making it a viable choice for a significant portion of users. However, be aware that some browsers may have limitations or inconsistencies. Thorough testing and graceful fallback options are advised.`,
     palette: 'warning',
-    // fakeStats: {
-    //   supported: 4200,
-    //   notSupported: 3064,
-    // },
   },
   notWellSupported: {
     icon: WarningCircle,
     heading: 'Not well-supported',
     message: `Consider exploring alternative solutions or providing alternative workflows to accommodate users who may not have access to this API. Testing and graceful degradation strategies are essential.`,
     palette: 'danger',
-    // fakeStats: {
-    //   supported: 1184,
-    //   notSupported: 7800,
-    // },
   },
+  notSupportedAtAll: {
+    icon: WarningCircle,
+    heading: 'Not supported at all',
+    message: `This API is not supported by any of the browsers in your usage data. Consider exploring alternative APIs to achieve the same functionality.`,
+    palette: 'danger',
+  }
 };
 
 export type SupportStatusKey = keyof typeof supportStatuses;
@@ -114,13 +110,38 @@ const FeatureDetail = ({ csvData }: { csvData: any }) => {
     parsedCSVData,
     percentageSupported,
     percentageNotSupported,
+    percentageUnknown,
     numberSupported,
     numberNotSupported,
+    numberUnknown,
     supportMessageKey,
     error
   } = useCanIUseData(csvData, selectedFeatureCompatibilityData);
 
   const supportStatus = supportStatuses[supportMessageKey];
+  const supportedStats = [
+    {
+      label: 'Supported',
+      stat: percentageSupported,
+      units: '%',
+      icon: CheckCircle,
+      subtext: `${numberSupported.toLocaleString()} users`,
+    },
+    {
+      label: 'Not supported',
+      stat: percentageNotSupported,
+      units: '%',
+      icon: WarningCircle,
+      subtext: `${numberNotSupported.toLocaleString()} users`,
+    },
+    {
+      label: 'Unkown',
+      stat: percentageUnknown,
+      units: '%',
+      icon: HelpCircle,
+      subtext: `${numberUnknown.toLocaleString()} users`,
+    },
+  ].filter(stat => stat.stat > 0);
 
   return (
     <Box
@@ -135,7 +156,7 @@ const FeatureDetail = ({ csvData }: { csvData: any }) => {
             sx={{
               flexDirection: 'column',
               alignItems: 'flex-start',
-              gap: 4,
+              gap: [3, 4],
             }}
           >
             <Flex
@@ -231,39 +252,20 @@ const FeatureDetail = ({ csvData }: { csvData: any }) => {
                 >
                   {supportStatus.message}
                 </Message>
+                {/* Desktop */}
                 <Flex
                   sx={{
-                    gap: 4,
+                    gap: [3, 4],
                     width: '100%',
+                    flexWrap: 'wrap',
                   }}
                 >
-                  <SupportCard
-                    label="Supported"
-                    stat={percentageSupported}
-                    units="%"
-                    icon={CheckCircle}
-                    subtext={`${numberSupported.toLocaleString()} users`}
-                  />
-                  <SupportCard
-                    label="Not supported"
-                    stat={percentageNotSupported}
-                    units="%"
-                    icon={WarningCircle}
-                    subtext={`${numberNotSupported.toLocaleString()} users`}
-                  />
+                  {supportedStats.map(stat => (
+                    <SupportCardWrapper>
+                      <SupportCard {...stat} />
+                    </SupportCardWrapper> 
+                  ))}
                 </Flex>
-                <Box
-                  sx={{
-                    overflow: 'visible',
-                    width: '100%',
-                  }}
-                >
-                  <CompatibilityTable
-                    data={parsedCSVData}
-                    limit={numberOfRowsToShow}
-                    onShowMore={handleShowMore}
-                  />
-                </Box>
               </>
             ) : (
               <PlaceholderDetail
