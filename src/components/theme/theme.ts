@@ -26,6 +26,7 @@ export const theme: Theme = {
 
     background: '#f6f6f6',
     backgroundSurface: '#fff',
+    backgroundSurfaceAlpha: 'rgba(255, 255, 255, 0.50)',
     backgroundHover: 'rgba(0, 0, 0, 0.05)',
     backgroundDangerAlpha: 'rgba(161,47,47,0.1)',
     backgroundSuccessAlpha: 'rgba(70, 255, 57, 0.221)',
@@ -33,7 +34,9 @@ export const theme: Theme = {
     backgroundFocusAlpha: 'rgba(9, 92, 255, 0.1)',
 
     borderNeutralPrimary: '#dedede',
+    borderNeutralPrimaryAlpha: 'rgba(2,2,2,0.1)',
     borderNeutralSecondary: '#eaeaea',
+    borderNeutralSecondaryAlpha: 'rgba(125,125,125,0.1)',
     borderFocus: '#095CFF',
 
     modes: {
@@ -50,6 +53,7 @@ export const theme: Theme = {
 
         background: '#191616',
         backgroundSurface: '#1D1B1B',
+        backgroundSurfaceAlpha: 'hsla(270, 3%, 14%, 0.5)',
         backgroundHover: 'rgba(255, 255, 255, 0.05)',
         backgroundDangerAlpha: 'rgba(161,47,47,0.1)',
         backgroundSuccessAlpha: 'rgba(69, 255, 57, 0.06)',
@@ -57,7 +61,9 @@ export const theme: Theme = {
         backgroundFocusAlpha: 'rgba(9, 92, 255, 0.1)',
 
         borderNeutralPrimary: '#2B2B2B',
+        borderNeutralPrimaryAlpha: 'rgba(201,227,227,0.1)',
         borderNeutralSecondary: '#242424',
+        borderNeutralSecondaryAlpha: 'rgba(131,157,157,0.1)',
       }
     }
   },
@@ -67,7 +73,7 @@ export const theme: Theme = {
     focus: '0px 0px 0px 4px rgba(9, 92, 255, 0.2)',
   },
   space: [
-    0, 4, 8, 16, 24, 32, 64, 128, 256
+    0, 4, 8, 16, 24, 32, 48, 64, 128, 256
   ],
   fontSizes: [
     13, 15, 17, 20, 24, 32, 48, 56, 64, 72, 96, 128
@@ -89,7 +95,7 @@ export const theme: Theme = {
       '&:hover': {
         bg: 'backgroundHover',
       },
-    }
+    },
   },
   text: {
     default: {

@@ -7,7 +7,7 @@ import CategoryBadge from './CategoryBadge';
 import Message from './Message';
 import SupportCard from './SupportCard';
 import Icon from './Icon';
-import { bcdData, bcdDataAsKeys } from '../data';
+import { bcdData, bcdDataAsKeys } from '../mdnData';
 
 import useCanIUseData from '../hooks/useCanIUseData';
 import SupportTable from './SupportTable';

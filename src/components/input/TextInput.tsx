@@ -33,6 +33,7 @@ const TextInput = forwardRef<any, TextInputProps>(({
           borderColor: 'borderNeutralPrimary',
           boxShadow: 'default',
           transition: 'all 0.2s ease-in-out',
+          height: ['44px', '44px', 'auto'],
 
           '&:focus': {
             outline: 'none',

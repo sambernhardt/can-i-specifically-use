@@ -36,7 +36,7 @@ const SupportCard: FC<Props> = ({
           sx={{
             justifyContent: 'space-between',
             alignItems: 'center',
-            mb: 2,
+            mb: ['2px', 2],
           }}
         >
           <Label sx={{ color: 'textNeutralSecondary' }}>{label}</Label>

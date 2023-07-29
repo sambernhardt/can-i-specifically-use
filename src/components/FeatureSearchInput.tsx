@@ -7,7 +7,7 @@ import TextInput from './input/TextInput';
 import { useDebounce } from '../hooks/useDebounce';
 import CategoryBadge from './CategoryBadge';
 import { useNavigate } from "react-router-dom";
-import { bcdDataAsArray, bcdDataAsKeys } from '../data';
+import { bcdDataAsArray, bcdDataAsKeys } from '../mdnData';
 
 const FeatureInputSearch = () => {
   let navigate = useNavigate();
@@ -61,6 +61,7 @@ const FeatureInputSearch = () => {
       sx={{
         position: 'relative',
         flex: 1,
+        height: ['44px', '44px', 'auto'],
       }}
     >
       <TextInput

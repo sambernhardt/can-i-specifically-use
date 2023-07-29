@@ -5,7 +5,7 @@ import exampleData from './exampleData.csv?raw';
 import usePersistedState from "./hooks/usePersistedState";
 import { CSVDataType } from "./types";
 import { validateAndParseCSVString } from "./utils";
-import LeftColumn from "./components/LeftColumn";
+import LeftColumn, { FooterContent } from "./components/LeftColumn";
 
 const HEADER_HEIGHT = '80px';
 
@@ -24,18 +24,23 @@ const App = () => {
       sx={{
         bg: 'background',
         color: 'textNeutralPrimary',
+        minHeight: '100vh',
       }}
     >
       <Flex
         as="header"
         sx={{
-          bg: 'backgroundSurface',
+          position: ['relative', 'relative', 'sticky'],
+          top: 0,
+          zIndex: 1,
           px: 4,
           alignItems: 'center',
           justifyContent: 'space-between',
           height: HEADER_HEIGHT,
           borderBottom: '1px solid',
-          borderColor: 'borderNeutralPrimary',
+          borderColor: 'borderNeutralPrimaryAlpha',
+          bg: 'backgroundSurfaceAlpha',
+          backdropFilter: 'blur(10px)',
         }}
       >
         <Link
@@ -57,7 +62,7 @@ const App = () => {
             sx={{
               display: 'block',
               color: 'textNeutralSecondary',
-              fontSize: 0,
+              fontSize: ['11px', 0],
               mt: 1,
             }}
           >
@@ -68,16 +73,21 @@ const App = () => {
       <Flex
         sx={{
           flexDirection: ['column', 'column', 'row'],
-          height: ['auto', `calc(100vh - ${HEADER_HEIGHT})`],
-          p: [4, 5],
-          gap: [4, 5],
         }}
       >
         <Box
           sx={{
+            alignSelf: ['auto', 'auto', 'flex-start'],
+            position: ['relative', 'relative', 'sticky'],
+            top: [0, 0, HEADER_HEIGHT],
+            height: ['auto', 'auto', `calc(100vh - ${HEADER_HEIGHT})`],
             maxWidth: ['100%', '100%', '400px'],
             minWidth: ['100%', '300px'],
             flexShrink: 1,
+            p: [4, 6],
+            pb: [3, 5],
+            borderRight: ['none', 'none', '1px solid'],
+            borderColor: ['transparent', 'transparent', 'borderNeutralPrimary']
           }}
         >
           <LeftColumn
@@ -96,15 +106,24 @@ const App = () => {
         <Divider
           sx={{
             display: ['block', 'block', 'none'],
-            my: 2,
+            my: 0
           }}
         />
         <Box
           sx={{
             flex: [1, 3],
+            p: [4, 6],
           }}
         >
           <FeatureDetail csvData={csvData ? csvData.rawData : ''} />
+        </Box>
+        <Box
+          sx={{
+            display: ['block', 'block', 'none'],
+            p: [4, 6],
+          }}
+        >
+          <FooterContent />
         </Box>
       </Flex>
     </Box>
