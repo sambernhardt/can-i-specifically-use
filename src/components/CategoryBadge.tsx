@@ -10,8 +10,8 @@ const sizeLookup = {
   sm: {
     borderRadius: '12px',
     fontSize: 0,
-    py: '1px',
-    px: '4px',
+    py: '2px',
+    px: '5px',
     color: 'textNeutralSecondary',
   },
   md: {

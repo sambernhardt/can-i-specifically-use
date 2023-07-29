@@ -15,7 +15,8 @@ const FeatureInputSearch = () => {
   const fuse = useMemo(() => {
     const options = {
       includeScore: true,
-      threshold: 0.3,
+      threshold: 0.5,
+      findAllMatches: true,
       keys: [
         'searchablePath',
         'category',
@@ -26,13 +27,13 @@ const FeatureInputSearch = () => {
   }, [bcdDataAsKeys]);
 
   const [search, setSearch] = useState('');
-  const debouncedSearch = useDebounce<string>(search, 20);
+  const debouncedSearch = useDebounce<string>(search, 200);
   const [showResults, setShowResults] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
 
   const results = useMemo(() => {
-    const _results = fuse.search(debouncedSearch).map((result: any) => result.item).splice(0, 15);
+    const _results = fuse.search(debouncedSearch).map((result: any) => result.item).splice(0, 25);
     return _results
   }, [debouncedSearch, fuse]);
 
