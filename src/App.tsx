@@ -58,7 +58,7 @@ const App = () => {
               display: 'block',
               color: 'textNeutralSecondary',
               fontSize: 0,
-              mt: 2,
+              mt: 1,
             }}
           >
             Browser compatibility for your actual usage data</Text>
@@ -96,13 +96,12 @@ const App = () => {
         <Divider
           sx={{
             display: ['block', 'block', 'none'],
-            my: 3,
+            my: 2,
           }}
         />
         <Box
           sx={{
             flex: [1, 3],
-            overflow: ['auto', 'auto', 'visible'],
           }}
         >
           <FeatureDetail csvData={csvData ? csvData.rawData : ''} />

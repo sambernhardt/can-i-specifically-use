@@ -13,7 +13,6 @@ import useCanIUseData from '../hooks/useCanIUseData';
 import SupportTable from './SupportTable';
 import PlaceholderDetail from './PlaceholderDetail';
 import { Fragment, ReactNode, useState } from 'react';
-import SupportCardWrapper from './SupportCardWrapper';
 
 export type SupportStatusShape = {
   icon: React.FC,
@@ -105,6 +104,17 @@ function addWordBreaks(text: string): ReactNode[] {
         <wbr />
       </Fragment>
     ));
+
+  } else if (text.includes('_')) {
+    // Split on hyphens
+    return text.split('_').map((word, index) => (
+      <Fragment key={index}>
+        {word}
+        {index < text.split('_').length - 1 && '_'}
+        <wbr />
+      </Fragment>
+    ));
+
   } else {
     // Split on camelCase
     return text.split(/(?=[A-Z])/).map((word, index) => (
@@ -224,8 +234,8 @@ const FeatureDetail = ({ csvData }: { csvData: any }) => {
                     //   calculateFontSize(selectedFeature.name.length),
                     // ],
                     fontSize: [6, 8],
-                    letterSpacing: '0.03em',
                     wordBreak: 'break-word',
+                    lineHeight: 1,
                   }}
                 >
                   {addWordBreaks(selectedFeature.name)}
@@ -277,7 +287,6 @@ const FeatureDetail = ({ csvData }: { csvData: any }) => {
                 >
                   {supportStatus.message}
                 </Message>
-                {/* Desktop */}
                 <Flex
                   sx={{
                     gap: [3, 4],
@@ -286,15 +295,14 @@ const FeatureDetail = ({ csvData }: { csvData: any }) => {
                   }}
                 >
                   {supportedStats.map(stat => (
-                    <SupportCardWrapper>
-                      <SupportCard {...stat} />
-                    </SupportCardWrapper> 
+                    <SupportCard key={stat.label} {...stat} />
                   ))}
                 </Flex>
                 <Box
                   sx={{
                     overflow: 'visible',
                     width: '100%',
+                    mb: 5,
                   }}
                 >
                   <SupportTable

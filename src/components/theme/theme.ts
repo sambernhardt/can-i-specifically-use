@@ -100,6 +100,7 @@ export const theme: Theme = {
       fontFamily: 'heading',
       color: 'textNeutralPrimary',
       fontWeight: 600,
+      letterSpacing: '-0.01em',
     },
   },
   styles: {

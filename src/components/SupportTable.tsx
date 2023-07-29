@@ -13,10 +13,12 @@ type Props = {
 const tableDefinition: {
   header: string,
   cell: (d: DecoratedUsageDataType, idx: number) => string | JSX.Element,
+  width: string,
 }[] = [
   {
     header: 'Browser',
     cell: d => d.Browser,
+    width: '120px',
   },
   {
     header: 'Version',
@@ -24,7 +26,6 @@ const tableDefinition: {
       <Flex
         sx={{
           gap: '2px',
-          fontFamily: 'monospace'
         }}
       >
         {d['Browser Version'].split('.').map((part: string, partIdx) => (
@@ -46,15 +47,18 @@ const tableDefinition: {
           </Fragment>
         ))}
       </Flex>
-    )
+    ),
+    width: '140px',
   },
   {
     header: 'Device category',
     cell: d => d['Device Category'],
+    width: '140px',
   },
   {
     header: 'Users',
     cell: d => d['Users'].toLocaleString(),
+    width: '100px',
   },
   {
     header: 'Supported',
@@ -64,7 +68,8 @@ const tableDefinition: {
       } else {
         return d['Supported'] ? 'Yes' : 'No'
       }
-    }
+    },
+    width: '100px',
   },
 ];
 
@@ -76,53 +81,77 @@ const SupportTable: FC<Props> = ({
   const dataToShow = limit ? data.slice(0, limit) : data;
 
   return (
-    <Box
-      sx={{
-        width: '100%',
-        overflowX: 'scroll',
-        mb: 5,
-      }}
-    >
+    <>
       <Box
-        as="table"
         sx={{
-          fontFamily: 'body',
-          fontSize: 1,
-          textAlign: 'left',
           width: '100%',
-          'tr td, tr th': {
-            py: 3,
-            borderBottom: '1px solid',
-            borderColor: 'borderNeutralPrimary',
-          },
+          overflowX: 'scroll',
         }}
       >
-        <thead>
-          <tr>
-            {tableDefinition.map(({ header }) => (
-              <th key={header}>
-                {header}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {dataToShow.map((row: any, rowIdx: any) => (
-            <tr key={`row-${rowIdx}`}>
-              {tableDefinition.map(({ cell }, cellIdx) => (
+        <Box
+          as="table"
+          sx={{
+            fontFamily: 'body',
+            fontSize: 1,
+            textAlign: 'left',
+            width: '100%',
+            tableLayout: 'fixed',
+            borderCollapse: 'collapse',
+            minWidth: tableDefinition.reduce((acc, { width }) => acc + parseInt(width) + 20, 0),
+
+            'tr td, tr th': {
+              py: 3,
+              px: [3, 4],
+              borderBottom: '1px solid',
+              borderColor: 'borderNeutralPrimary',
+            },
+            'tr td:first-of-type, tr th:first-of-type': {
+              // pl: 0,
+            },
+          }}
+        >
+          <thead>
+            <tr>
+              {tableDefinition.map(({ header }, headerIdx) => (
                 <Box
-                  as="td"
-                  key={`cell-${rowIdx}-${cellIdx}`}
+                  as="th"
+                  key={header}
                   sx={{
-                    fontFamily: 'monospace'
+                    width: tableDefinition[headerIdx].width,
+                    px: 3,
+                    fontSize: 0,
                   }}
                 >
-                  {cell(row, rowIdx)}
+                  {header}
                 </Box>
               ))}
             </tr>
-          ))}
-        </tbody>
+          </thead>
+          <tbody>
+            {dataToShow.map((row: any, rowIdx: any) => (
+              <tr key={`row-${rowIdx}`}>
+                {tableDefinition.map(({ cell }, cellIdx) => (
+                  <Box
+                    as="td"
+                    key={`cell-${rowIdx}-${cellIdx}`}
+                    sx={{
+                      fontSize: 2,
+                      minWidth: tableDefinition[cellIdx].width,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: tableDefinition[cellIdx].width,
+                      }}
+                    >
+                      {cell(row, rowIdx)}
+                    </Box>
+                  </Box>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </Box>
       </Box>
       {limit && data.length > limit && (
         <Flex
@@ -146,7 +175,7 @@ const SupportTable: FC<Props> = ({
           </Button>
         </Flex>
       )}
-    </Box>
+    </>
   )
 }
 

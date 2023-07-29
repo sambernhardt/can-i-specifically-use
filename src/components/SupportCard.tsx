@@ -23,6 +23,11 @@ const SupportCard: FC<Props> = ({
         flexDirection: ['column', 'row'],
         width: '100%',
         gap: 3,
+        flex: 1,
+        minWidth: '160px',
+        borderRadius: '16px',
+        p: 4,
+        bg: 'backgroundSurface',
       }}
     >
       <Icon icon={icon} />
@@ -42,7 +47,6 @@ const SupportCard: FC<Props> = ({
             display: 'block',
             fontSize: [5, 6],
             fontWeight: 600,
-            letterSpacing: '0.02em',
             mb: 3,
           }}
         >

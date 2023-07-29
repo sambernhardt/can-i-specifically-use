@@ -6,7 +6,6 @@ import Message from './Message';
 import SupportCard from './SupportCard';
 
 import FakeTable from './FakeTable';
-import SupportCardWrapper from './SupportCardWrapper';
 
 const PlaceholderDetail = ({ selectedFeatureCompatibilityData }: { selectedFeatureCompatibilityData: any }) => {
   return (
@@ -41,22 +40,18 @@ const PlaceholderDetail = ({ selectedFeatureCompatibilityData }: { selectedFeatu
           width: '100%',
         }}
       >
-        <SupportCardWrapper>
-          <SupportCard
-            label="Supported"
-            stat={`${30}%`}
-            icon={CheckCircle}
-            subtext={`99 users`}
-          />
-        </SupportCardWrapper>
-        <SupportCardWrapper>
-          <SupportCard
-            label="Not supported"
-            stat={`${70}%`}
-            icon={WarningCircle}
-            subtext={`3 users`}
-          />
-        </SupportCardWrapper>
+        <SupportCard
+          label="Supported"
+          stat={`${30}%`}
+          icon={CheckCircle}
+          subtext={`99 users`}
+        />
+        <SupportCard
+          label="Not supported"
+          stat={`${70}%`}
+          icon={WarningCircle}
+          subtext={`3 users`}
+        />
       </Flex>
       <FakeTable selectedFeatureCompatibilityData={selectedFeatureCompatibilityData} />
     </Flex>
