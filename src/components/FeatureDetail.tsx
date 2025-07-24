@@ -158,21 +158,21 @@ const FeatureDetail = ({ csvData }: { csvData: any }) => {
       stat: percentageSupported,
       units: '%',
       icon: CheckCircle,
-      subtext: `${numberSupported.toLocaleString()} users`,
+      subtext: `${numberSupported.toLocaleString()} user${numberSupported === 1 ? "" : "s"}`,
     },
     {
       label: 'Not supported',
       stat: percentageNotSupported,
       units: '%',
       icon: WarningCircle,
-      subtext: `${numberNotSupported.toLocaleString()} users`,
+      subtext: `${numberNotSupported.toLocaleString()} user${numberNotSupported === 1 ? "" : "s"}`,
     },
     {
       label: 'Unkown',
       stat: percentageUnknown,
       units: '%',
       icon: HelpCircle,
-      subtext: `${numberUnknown.toLocaleString()} users`,
+      subtext: `${numberUnknown.toLocaleString()} user${numberUnknown === 1 ? "" : "s"}`,
     },
   ].filter(stat => stat.stat > 0);
 
